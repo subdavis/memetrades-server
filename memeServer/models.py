@@ -21,12 +21,14 @@ class Stock(Document):
     name=StringField(required=True)
     price=FloatField(required=True)
     history=EmbeddedDocumentListField(StockHistory)
+    trend=FloatField()
 
     def buy_one(self):
         self.price += 1
         hist = StockHistory()
         hist.init(self.price)
         self.history.append(hist)
+        self.trend = 1.0
         self.save()
 
     def sell_one(self):
@@ -34,6 +36,7 @@ class Stock(Document):
         hist = StockHistory()
         hist.init(self.price)
         self.history.append(hist)
+        self.trend = -1.0
         self.save()
 
 
@@ -68,10 +71,10 @@ class User(Document):
         Step 2: modify the market price
         """
         if (self.money > stock.price):
-            if stock.name in self.holdings.keys():
-                self.holdings[stock.name] += 1
+            if str(stock.id) in self.holdings.keys():
+                self.holdings[str(stock.id)] += 1
             else:
-                self.holdings[stock.name] = 1
+                self.holdings[str(stock.id)] = 1
             self.money -= stock.price
             stock.buy_one()
             self.save()
@@ -83,14 +86,20 @@ class User(Document):
         Step 1: modify the user holdings
         Step 2: modify the market price
         """
-        if stock.name in self.holdings.keys():
-            if self.holdings[stock.name] >= 1:
+        if str(stock.id) in self.holdings.keys():
+            if self.holdings[str(stock.id)] >= 1:
                 self.money += stock.price
-                self.holdings[stock.name] -= 1
+                self.holdings[str(stock.id)] -= 1
                 stock.sell_one()
                 self.save()
             return False
         return False
+
+    def get_holdings(self):
+        ret = {}
+        for stock in self.holdings.keys():
+            ret[Stock.objects.get(id=stock).name] = self.holdings[stock]
+        return ret
 
     def get_id(self):
         """

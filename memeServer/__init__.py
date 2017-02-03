@@ -1,22 +1,24 @@
-from flask import Flask, request, url_for, jsonify, redirect
+from flask import Flask, request, url_for, jsonify, redirect, Response, render_template
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from flask_cors import CORS, cross_origin
 from flask_oauth import OAuth
 import random
 import pickle
 import datetime
+import re
 
 from mongoengine import DoesNotExist
 
 from . import models
 from . import facebookShim
+from . import imports
 
 #
 # App init
 #
 
 app = Flask(__name__)
-app.config['DEBUG'] = True
+app.config['DEBUG'] = False
 app.config['SECRET_KEY'] = settings.SECRET_KEY
 CORS(app)
 
@@ -64,19 +66,27 @@ def load_user_from_request(request):
     return None
 
 #
+# Template Views
+#
+
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+#
 # Private APIs
 # 
 
-@app.route('/')
+@app.route('/api/me')
 @login_required
 def memes():
     return jsonify({
         "money": current_user.money,
-        "stocks": current_user.holdings,
+        "stocks": current_user.get_holdings(),
         "api_key": current_user.api_key
     })
 
-@app.route('/buy')
+@app.route('/api/buy')
 @login_required
 def buy():
     meme = request.args.get("meme")
@@ -90,7 +100,7 @@ def buy():
     return fail()
 
 
-@app.route('/sell')
+@app.route('/api/sell')
 @login_required
 def sell():
     meme = request.args.get("meme")
@@ -100,11 +110,11 @@ def sell():
             return success()
     return fail()
 
-@app.route("/logout")
+@app.route('/logout')
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for("memes"))
+    return redirect(url_for('index'))
 
 #
 # Publically available APIS
@@ -113,44 +123,50 @@ def logout():
 @app.route('/login')
 def login():
     """ /login is hit before and after the user gets to facebook. """
-    return facebook.authorize(callback=settings.SERVER_NAME + url_for("oauth_authorized"))
+    callback_base = settings.SERVER_NAME
+    return facebook.authorize(callback=callback_base + url_for("oauth_authorized"))
 
 @app.route('/oauth-authorized')
 @facebook.authorized_handler
 def oauth_authorized(resp):
-    next_url = url_for('memes')
+    print("I was called?")
+    next_url = url_for('index')
     if resp is None:
         flash(u'You denied the request to sign in.')
         return redirect(next_url)
     user_data = fbshim.get_user(resp['access_token'])
     user = load_user(user_data['user_id'])
-    if user:
-        login_user(user)
-    else:
+    if not user:
         user = models.User()
         user.init(user_data['name'], user_data['user_id'])
         user.save()
-    return user.to_json()
+    login_user(user)
+    redirect_to_client = redirect(url_for('index'), code=302)
+    response = app.make_response(redirect_to_client )  
+    response.set_cookie('api_key',value=user.api_key)
+    return response
 
-@app.route('/stocks')
+@app.route('/api/stocks')
 def stocks():
-    all_stocks = models.Stock.objects.only('name','price')
-    ret = {}
-    for s in all_stocks:
-        ret[s.name] = s.price
+    all_stocks = models.Stock.objects.only('name','price','trend').order_by('-price')
+    return Response(all_stocks.to_json(), mimetype="application/json")
+
+@app.route('/api/history')
+def history():
+    print(request.url)
+    meme = request.args.get("meme")
+    stock = models.Stock.objects.filter(name=meme).first()
+    ret = []
+    if stock:
+        for h in stock.history:
+            ret.append({
+                "price": h.price,
+                "time": datetime.datetime.fromtimestamp(h.time)
+            })
 
     return jsonify(ret)
 
-@app.route('/history')
-def history():
-    meme = request.args.get("meme")
-    stock = models.Stock.objects.filter(name=meme).first()
-    if stock:
-        return stock.history.to_json()
-    else:
-        return "\{\}"
-
-@app.route('/recent')
+@app.route('/api/recent')
 def recent():   
     return jsonify(transactions[-100:])
 

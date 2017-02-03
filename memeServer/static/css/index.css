@@ -1,0 +1,146 @@
+html body {
+    width: 100%;
+    height: 100%;
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+td {
+    cursor: pointer;
+}
+tr.economy {
+    font-family: "Courier New";
+    font-weight: 500;
+    justify-content: left;
+}
+tr.economy td{
+    padding: 0px 0px;
+    /*border: 1px solid black;*/
+    min-width: 30px;
+}
+tr.economy:hover {
+    font-weight: 700;
+}
+
+table, th, td {
+    /*border-bottom: 1px solid black;*/
+    white-space: nowrap;
+}
+
+button.buysell {
+    display: inline-block;
+    width: 49%;
+}
+
+input.buysell {
+    width: 100%;
+}
+
+/*TODO: Make floating buy/sell box prettier, esp. when screen is not maximized*/
+.buysellbox {
+    background-color: rgba(0, 0, 0, 0.7);
+    position: fixed;
+    bottom: 25px;
+    left: 0px;
+    padding-bottom: 10px;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    /*z-index: 5;*/
+}
+
+.buysellbox h1 {
+    color: white;
+}
+
+.footer {
+    background: white;
+    position: fixed;
+    bottom: 0px;
+    height: 25px;
+    width: 100%;
+    font-size: 20px;
+    /*z-index: 10;*/
+}
+
+body > .container-fluid {
+    margin-bottom: 50px;
+}
+
+#logout {
+    width: 100%;
+}
+
+.fixed {
+/*    overflow-y: visible;
+    height: 100%;*/
+}
+#market {
+    /*overflow-x: auto;*/
+    /*margin-bottom: 50px;*/
+}
+
+@media (min-width:0px){
+    .fixed {
+        position: relative;
+    }
+}
+/*@media (min-width:768px){
+    .fixed {
+        position: fixed;
+    }
+}*/
+
+#tbm {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: black;
+    z-index: 888888;
+}
+
+#titles
+{
+    position: absolute;
+    width: 18em;
+    height: 200em;
+    bottom: 0;
+    left: 50%;
+    margin-left: -9em;
+    font-size: 350%;
+    font-weight: bold;
+    text-align: justify;
+    overflow: hidden;
+    transform-origin: 50% 100%;
+    transform: perspective(300px) rotateX(25deg);
+}
+
+#titles:after
+{
+    position: absolute;
+    content: ' ';
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 60%;
+    background-image: linear-gradient(top, rgba(0,0,0,1) 0%, transparent 100%);
+    pointer-events: none;
+}
+
+#titles p {
+color: yellow;
+}
+
+#titlecontent
+{
+    position: absolute;
+    top: 100%;
+    animation: scroll 60s linear 0s infinite;
+}
+
+@keyframes scroll {
+    0% { top: 100%; }
+    100% { top: -170%; }
+}

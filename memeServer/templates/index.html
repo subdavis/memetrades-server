@@ -1,0 +1,85 @@
+ <html>
+ <head>
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/canvasjs/1.7.0/canvasjs.min.js"></script>
+     <script src="{{ url_for('static', filename='js/graph.js') }}"></script>
+     <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+     
+     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+</head>
+<body>
+
+    <div class="container-fluid no-gutters">
+        <div class="row">
+            <div class="col-sm-3 fixed">
+                <div id="portfolio">
+                    
+                    {% if current_user.is_authenticated %}
+                    <h1> Your Portfolio: </h1>
+                    <pre id="jsonP">
+                    </pre>
+                    <button onclick="location.href = '/logout';" id="logout">Log Out</button>
+                    {% else %}
+                    <h1> Sign in to trade: </h1>
+                    <div id="fblogin">
+                        <a href="/login"><img src="{{ url_for('static', filename='img/fblogin.png') }}"></a>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- 
+                <h1><a href="visualizer">Visualizer</a></h1> -->
+
+                <h1>API doc:</h1>
+                your stocks:
+                <pre>/api/me</pre>
+                all stocks:
+                <pre>/api/stocks</pre>
+                buy:
+                <pre>/api/buy?meme=yourmemehere</pre>
+                sell:
+                <pre>/api/sell?meme=yourmemehere</pre>
+                price history:
+                <pre>/api/history?meme=yourmemehere</pre>
+                recent transactions:
+                <pre>/api/meme/recent</pre>
+
+                Credit: <a href="http://subdavis.com">Brandon</a>
+                        <a href="http://hgreer.com">Hastings</a>
+                        <a href="https://github.com/dafondo">Austin</a>
+                        <a href="https://kylefeng28.github.io/">Kyle</a>
+                <br><br>
+                <br><br>
+                <br><br>
+                <br><br>
+            </div>
+            <div class="col-sm-9">
+                <div id="graph">
+                    <div id="chartContainer" style="height: 300px; width: 100%;">
+                    </div>
+                <div id="market">
+                    <h1> Market Prices: </h1>
+                    <div id="jsonM">
+                        <table></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class='buysellbox col-sm-3'>
+        {% if current_user.is_authenticated %}
+        <h1> Buy and Sell </h1>
+        <input class="buysell" type='text' name='meme' id='meme'>
+        <br><br>
+        <button class="buysell" onclick="sell()" width="50%"> Sell </button>
+        <button class="buysell" onclick="buy()"> Buy </button>
+        {% endif %}
+    </div>
+    <div class="footer">
+        <marquee behavior="scroll" direction="left">Breaking news.  Memes trading at record highs.  Software developers for new meme trading platform recorded coding while high.</marquee>
+    </div>
+     <script src="{{ url_for('static', filename='js/bees.js') }}"></script>
+     <div style="display:none;" id="tbm"></div>
+</body>
+</html>
