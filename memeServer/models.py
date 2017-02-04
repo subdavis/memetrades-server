@@ -97,7 +97,7 @@ class User(Document):
         Step 1: modify the user holdings
         Step 2: modify the market price
         """
-        if (self.money > stock.price):
+        if (self.money > stock.price and not stock.blacklisted):
             if str(stock.id) in self.holdings.keys():
                 self.holdings[str(stock.id)] += 1
             else:
@@ -113,7 +113,7 @@ class User(Document):
         Step 1: modify the user holdings
         Step 2: modify the market price
         """
-        if str(stock.id) in self.holdings.keys():
+        if str(stock.id) in self.holdings.keys() and not stock.blacklisted:
             if self.holdings[str(stock.id)] >= 1:
                 self.money += stock.price
                 self.holdings[str(stock.id)] -= 1
