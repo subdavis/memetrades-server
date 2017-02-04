@@ -75,8 +75,8 @@ class User(Document):
                 self.holdings[str(stock.id)] += 1
             else:
                 self.holdings[str(stock.id)] = 1
-            self.money -= stock.price
             stock.buy_one()
+            self.money -= stock.price
             self.save()
             return True
         return False
