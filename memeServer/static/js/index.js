@@ -41,16 +41,19 @@ function updateMarket(){
 }
 
 function update() {
-  $.getJSON(base_url+'/api/me', function(data) {
-        var portfolioText = "Money: " + data['money'] + "\n";
-        portfolioText += "Stocks: \n";
-        for (var i=0;i<data['stocks'].length;i++){
-            if (data['stocks'][i]['amount'] > 0)
-                portfolioText+= "  " + data['stocks'][i]['amount'] + " : " + data['stocks'][i]['name'] + "\n";
-        }
-        document.getElementById("jsonP").innerHTML = portfolioText;
-        updateMarket();
-    });
+    var portfolio = $("#jsonP");
+    if (portfolio){
+        $.getJSON(base_url+'/api/me', function(data) {
+            var portfolioText = "Money: " + data['money'] + "\n";
+            portfolioText += "Stocks: \n";
+            for (var i=0;i<data['stocks'].length;i++){
+                if (data['stocks'][i]['amount'] > 0)
+                    portfolioText+= "  " + data['stocks'][i]['amount'] + " : " + data['stocks'][i]['name'] + "\n";
+            }
+            document.getElementById("jsonP").innerHTML = portfolioText;
+            updateMarket();
+        });
+    }
 }
 
 function sell() {
