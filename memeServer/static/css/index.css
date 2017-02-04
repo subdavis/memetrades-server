@@ -76,6 +76,12 @@ body > .container-fluid {
 #logout {
     width: 100%;
 }
+.trend_up {
+    color: green;
+}
+.trend_down {
+    color: red;
+}
 
 .fixed {
 /*    overflow-y: visible;

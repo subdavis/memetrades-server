@@ -13,7 +13,7 @@ function tableCreate(el, data)
         var td_price = tr.insertCell();
         td_price.appendChild(document.createTextNode('$' + data[i]['price']));
         var td_trend = tr.insertCell();
-        td_trend.appendChild(document.createTextNode(data[i]['trend'] ? trend_symbol(data[i]['trend']): ""));
+        td_trend.appendChild(data[i]['trend'] ? trend_symbol(data[i]['trend']) : "");
         var td_value = tr.insertCell();
         td_value.appendChild(document.createTextNode(data[i]['name']));
     }
@@ -90,9 +90,16 @@ var getUrlParameter = function getUrlParameter(sParam) {
 };
 
 function trend_symbol(num) {
-    if (num > 0)
-        return '⬆';
-    return '⬇';
+    var span = document.createElement('span');
+    if (num > 0){
+        span.innerHTML = '⬆';
+        span.className = 'trend_up'
+    }
+    else{
+        span.innerHTML = '⬇';
+        span.className = 'trend_down'
+    }
+    return span;
 }
 
 // Entry point
