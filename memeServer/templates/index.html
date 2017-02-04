@@ -25,7 +25,7 @@
 
     <div class="container-fluid no-gutters">
         <div class="row">
-            <div class="col-sm-3 fixed">
+            <div class="col-sm-4 col-md-3 fixed">
                 <div id="portfolio">
                     
                     {% if current_user.is_authenticated %}
@@ -75,7 +75,7 @@
                 <br><br>
                 <br><br>
             </div>
-            <div class="col-sm-9">
+            <div class="col-sm-8 col-md-9">
                 <div id="graph">
                     <div id="chartContainer" style="height: 300px; width: 100%;">
                     </div>
@@ -88,7 +88,7 @@
             </div>
         </div>
     </div>
-    <div class='buysellbox col-sm-3'>
+    <div class='buysellbox col-sm-4 col-md-3'>
         {% if current_user.is_authenticated %}
         <h1> Buy and Sell </h1>
         <input class="buysell" type='text' name='meme' id='meme'>
