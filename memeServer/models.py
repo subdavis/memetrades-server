@@ -96,10 +96,9 @@ class User(Document):
         return False
 
     def get_holdings(self):
-        my_stocks = [Stock.objects.get(id=key) for key in self.holdings.keys()]
-        ret = [{"name": stock.name, "price": stock.price} for stock in my_stocks]
+        ret = [{"name": Stock.objects.get(id=key).name, "amount": self.holdings[key]} for key in self.holdings.keys()]
         ret = sorted(ret, 
-            key=lambda k: k['price'], 
+            key=lambda k: k['amount'], 
             reverse=True) 
         return ret
 

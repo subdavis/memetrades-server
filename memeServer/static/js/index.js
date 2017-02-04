@@ -45,7 +45,7 @@ function update() {
         var portfolioText = "Money: " + data['money'] + "\n";
         portfolioText += "Stocks: \n";
         for (var i=0;i<data['stocks'].length;i++){
-            portfolioText+= "  " + data['stocks'][i]['price'] + " : " + data['stocks'][i]['name'] + "\n";
+            portfolioText+= "  " + data['stocks'][i]['amount'] + " : " + data['stocks'][i]['name'] + "\n";
         }
         document.getElementById("jsonP").innerHTML = portfolioText;
         updateMarket();
