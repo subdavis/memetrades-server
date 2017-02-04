@@ -39,6 +39,16 @@ class Stock(Document):
         self.trend = -1.0
         self.save()
 
+    def get_value(self, amount):
+        """Get the current evaluation of a stock"""
+        total_worth = (self.price * (self.price + 1)) / 2.0
+        other_worth = 0
+        if amount < self.price:
+            # Others own shares...
+            not_my_shares = self.price - amount
+            other_worth = (not_my_shares*(not_my_shares+1)) / 2.0
+        return total_worth - other_worth
+
 
 class User(Document):
     # Flask Login Stuff
@@ -47,6 +57,7 @@ class User(Document):
     name=StringField(required=True)
     money=FloatField(required=True)
     api_key=StringField(required=True)
+    admin=BooleanField()
 
     # holdings Example 
     # { 
@@ -59,6 +70,7 @@ class User(Document):
         self.money = settings.INITIAL_MONEY
         self.holdings = {}
         self.api_key = utils.get_new_key()
+        self.admin = False
         self.save()
 
     # 
@@ -96,7 +108,11 @@ class User(Document):
         return False
 
     def get_holdings(self):
-        ret = [{"name": Stock.objects.get(id=key).name, "amount": self.holdings[key]} for key in self.holdings.keys()]
+        ret = [{
+                "name": Stock.objects.get(id=key).name, 
+                "amount": self.holdings[key], 
+                "value":Stock.objects.get(id=key).get_value(self.holdings[key]) 
+            } for key in self.holdings.keys()]
         ret = sorted(ret, 
             key=lambda k: k['amount'], 
             reverse=True) 
@@ -119,3 +135,7 @@ class User(Document):
     @property
     def is_anonymous(self):
         return False
+
+    @property
+    def is_admin(self):
+        return self.admin

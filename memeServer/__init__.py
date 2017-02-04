@@ -3,7 +3,9 @@ from flask_login import LoginManager, current_user, login_user, logout_user, log
 from flask_cors import CORS, cross_origin
 from flask_oauth import OAuth
 import random
+import logging
 import pickle
+from functools import wraps
 import datetime
 import re
 
@@ -13,6 +15,12 @@ from . import models
 from . import facebookShim
 
 #
+# Setup logger
+#
+
+logger = logging.getLogger(__name__)
+
+#
 # App init
 #
 
@@ -20,6 +28,7 @@ app = Flask(__name__)
 app.config['DEBUG'] = False
 app.config['SECRET_KEY'] = settings.SECRET_KEY
 CORS(app)
+logger.info("Running with debug = " + str(app.config['DEBUG']))
 
 #
 # Login init
@@ -28,11 +37,13 @@ CORS(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
+logger.info("Initialized logins...")
 
 #
 # Oauth Handlers and Login
 #
 
+fbshim = facebookShim.FacebookShim()
 oauth = OAuth()
 facebook = oauth.remote_app('facebook',
     base_url='https://graph.facebook.com/',
@@ -43,7 +54,6 @@ facebook = oauth.remote_app('facebook',
     consumer_secret=settings.FACEBOOK['APP_SECRET'],
     request_token_params={'scope': 'email'}
 )
-fbshim = facebookShim.FacebookShim()
 
 @login_manager.user_loader
 def load_user(fb_id):
@@ -64,7 +74,7 @@ def load_user_from_request(request):
         return None
     return None
 
-# If local debug, bypass auth and assume the user is authenticated...
+# If local debug, bypass fb auth and assume the user is authenticated...
 def get_local_user():
     name = "LocalUser"
     user = models.User.objects.filter(name=name).first()
@@ -74,6 +84,17 @@ def get_local_user():
         user.save()
     return user
 
+# Wrapper for checking user permissions
+# def requires_roles(*roles):
+#     def wrapper(f):
+#         @wraps(f)
+#         def wrapped(*args, **kwargs):
+#             if current_user.get_role() not in roles:
+#                 return role_error(roles)
+#             return f(*args, **kwargs)
+#         return wrapped
+#     return wrapper
+
 #
 # Template Views
 #
@@ -82,6 +103,7 @@ def get_local_user():
 @app.route('/')
 def index():
     return render_template('index.html')
+
 #
 # Private APIs
 # 
@@ -108,7 +130,6 @@ def buy():
         return success()
     return fail()
 
-
 @app.route('/api/sell')
 @login_required
 def sell():
@@ -129,15 +150,20 @@ def logout():
 # Publically available APIS
 # 
 
-@app.route('/api/stock')
+@app.route('/api/stock', methods=['GET','DELETE'])
 def stock():
     meme = request.args.get("meme")
     stock = models.Stock.objects.filter(name=meme).only('name','price','trend').first()
     if stock:
-        return Response(stock.to_json(), mimetype="application/json")
+        if request.method == 'GET':
+            return Response(stock.to_json(), mimetype="application/json")
+        elif request.method == 'DELETE':
+            if current_user.is_admin:
+                pass
+            else:
+                return role_error('admin')
     else:
         return jsonify({})
-
 
 @app.route('/login')
 def login():
@@ -153,7 +179,7 @@ def login():
 @app.route('/oauth-authorized')
 @facebook.authorized_handler
 def oauth_authorized(resp):
-    print("I was called?")
+    """Called after the oauth flow is done."""
     next_url = url_for('index')
     if resp is None:
         flash(u'You denied the request to sign in.')
@@ -165,6 +191,7 @@ def oauth_authorized(resp):
         user.init(user_data['name'], user_data['user_id'])
         user.save()
     login_user(user)
+    logger.info("Welcome, " + user.name)
     redirect_to_client = redirect(url_for('index'), code=302)
     response = app.make_response(redirect_to_client )  
     response.set_cookie('api_key',value=user.api_key)
@@ -187,7 +214,6 @@ def history():
                 "price": h.price,
                 "time": datetime.datetime.fromtimestamp(h.time)
             })
-
     return jsonify(ret)
 
 @app.route('/api/recent')
@@ -197,8 +223,12 @@ def recent():
 #
 # A few other helpers
 #
+
 def success():
     return jsonify({"status":"success"})
 
 def fail():
     return jsonify({"status":"fail"})
+
+def role_error(roles):
+    return jsonify({"status": "fail", "reason": "user does not have permission"})
