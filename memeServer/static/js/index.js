@@ -43,6 +43,7 @@ function updateMarket(){
 function update() {
   $.getJSON(base_url+'/api/me', function(data) {
         var portfolioText = JSON.stringify(data, undefined, 2);
+        // portfolioText = "Money: " + data['money']
         // Removes brackets
         portfolioText = portfolioText.substring(2, portfolioText.length-1).replace(/{(.*)/, '').replace(/(.*)}/, '');
         // Removes quotation marks and capitalize money and stocks

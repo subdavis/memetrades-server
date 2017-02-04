@@ -129,6 +129,16 @@ def logout():
 # Publically available APIS
 # 
 
+@app.route('/api/stock')
+def stock():
+    meme = request.args.get("meme")
+    stock = models.Stock.objects.filter(name=meme).only('name','price','trend').first()
+    if stock:
+        return Response(stock.to_json(), mimetype="application/json")
+    else:
+        return jsonify({})
+
+
 @app.route('/login')
 def login():
     """ /login is hit before and after the user gets to facebook. """
