@@ -71,6 +71,7 @@ function init(){
     api_key = getUrlParameter("api_key");
     update();
     // while (hottest == ""){}
+    updateMarket();
     setInterval(updateMarket, 3000);
 }
 

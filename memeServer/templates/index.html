@@ -1,7 +1,7 @@
  <html>
  <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    
+
     <!-- FACEBOOK -->
     <meta property="og:title" content="Meme Trader" />
     <meta property="og:site_name" content="memetrader.com"/>
@@ -56,7 +56,7 @@
                 <!-- 
                 <h1><a href="visualizer">Visualizer</a></h1> -->
 
-                <h1>API doc:</h1>
+                <h1>API Docs:</h1>
                 your stocks:
                 <pre>/api/me</pre>
                 all stocks:
@@ -71,6 +71,12 @@
                 <pre>/api/meme/recent</pre>
                 single stock info:
                 <pre>/api/stock?meme=yourmemehere</pre>
+
+                {% if current_user.is_authenticated %}
+                Your API key: append to query
+                <pre>api_key={{ current_user.api_key }}</pre>
+                <br>
+                {% endif %}
 
                 Credit: <a href="http://subdavis.com">Brandon</a>
                         <a href="http://hgreer.com">Hastings</a>
@@ -91,7 +97,7 @@
                         <table></table>
                     </div>
                     <h1>About MemeTrades.com</h1>
-                    <p>We believe we are entering the golden age of meme trading.  Don't feel limited by the current meme market.  Buying a new meme adds it to our list.  Overly offensive memes will be removed and accounts banned currently at the developer's disgression.</p>
+                    <p>We the developers believe that civilization is entering the golden age of meme trading.  Don't feel limited by the current meme market.  Buying a new meme adds it to our list.  Overly offensive memes will be removed and accounts banned currently at the developer's disgression.  Don't let your memes be dreams.</p>
                 </div>
             </div>
         </div>
