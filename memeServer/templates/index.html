@@ -112,7 +112,7 @@
             <button class="buysell" onclick="sell()" width="50%"> Sell </button>
             <button class="buysell" onclick="buy()"> Buy </button>
             {% if current_user.is_admin %}
-                <button class="buysell" onclick="remove()">Remove</button>
+                <button onclick="remove()">Admin: Remove</button>
             {% endif %}
         {% endif %}
     </div>
