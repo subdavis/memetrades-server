@@ -62,13 +62,19 @@ function update() {
 
 function sell() {
     var meme = document.getElementById("meme").value;
-    $.get(base_url+"/api/sell", {meme: meme}, update)
+    $.get(base_url+"/api/sell", {meme: meme}, update);
 }
 
 
 function buy() {
     var meme = document.getElementById("meme").value;
-    $.get(base_url+"/api/buy", {meme: meme}, update)
+    $.get(base_url+"/api/buy", {meme: meme}, update);
+}
+
+function remove(){
+    /* Admin only. Don't bother, the backend will check your permissions */
+    var meme = document.getElementById("meme").value;
+    $.get(base_url+"/api/admin/stock/delete", {meme: meme}, update);
 }
 
 function init(){

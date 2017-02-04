@@ -34,15 +34,15 @@
                 <div id="portfolio">
                     
                     {% if current_user.is_authenticated %}
-                    <h1> Your Portfolio: </h1>
-                    <pre id="jsonP">
-                    </pre>
-                    <button onclick="location.href = '/logout';" id="logout">Log Out</button>
+                        <h1> Your Portfolio: </h1>
+                        <pre id="jsonP">
+                        </pre>
+                        <button onclick="location.href = '/logout';" id="logout">Log Out</button>
                     {% else %}
-                    <h1> Sign in to trade: </h1>
-                    <div id="fblogin">
-                        <a href="/login"><img src="{{ url_for('static', filename='img/fblogin.png') }}"></a>
-                    </div>
+                        <h1> Sign in to trade: </h1>
+                        <div id="fblogin">
+                            <a href="/login"><img src="{{ url_for('static', filename='img/fblogin.png') }}"></a>
+                        </div>
                     {% endif %}
                     <!-- Social -->
                     <div id="Social">
@@ -75,9 +75,9 @@
                 <pre>/api/stock?meme=yourmemehere</pre>
 
                 {% if current_user.is_authenticated %}
-                Your API key: append to query
-                <pre>api_key={{ current_user.api_key }}</pre>
-                <br>
+                    Your API key: append to query
+                    <pre>api_key={{ current_user.api_key }}</pre>
+                    <br>
                 {% endif %}
 
                 Credit: <a href="http://subdavis.com">Brandon</a>
@@ -106,11 +106,14 @@
     </div>
     <div class='buysellbox col-sm-4 col-md-3'>
         {% if current_user.is_authenticated %}
-        <h1> Buy and Sell </h1>
-        <input class="buysell" type='text' name='meme' id='meme'>
-        <br><br>
-        <button class="buysell" onclick="sell()" width="50%"> Sell </button>
-        <button class="buysell" onclick="buy()"> Buy </button>
+            <h1> Buy and Sell </h1>
+            <input class="buysell" type='text' name='meme' id='meme'>
+            <br><br>
+            <button class="buysell" onclick="sell()" width="50%"> Sell </button>
+            <button class="buysell" onclick="buy()"> Buy </button>
+            {% if current_user.is_admin %}
+                <button class="buysell" onclick="remove()">Remove</button>
+            {% endif %}
         {% endif %}
     </div>
     <div class="footer">

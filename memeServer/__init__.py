@@ -15,10 +15,11 @@ from . import models
 from . import facebookShim
 
 #
-# Setup logger
+# Setup
 #
 
 logger = logging.getLogger(__name__)
+models.sanity_checks()
 
 #
 # App init
@@ -85,15 +86,15 @@ def get_local_user():
     return user
 
 # Wrapper for checking user permissions
-# def requires_roles(*roles):
-#     def wrapper(f):
-#         @wraps(f)
-#         def wrapped(*args, **kwargs):
-#             if current_user.get_role() not in roles:
-#                 return role_error(roles)
-#             return f(*args, **kwargs)
-#         return wrapped
-#     return wrapper
+def requires_roles(*roles):
+    def wrapper(f):
+        @wraps(f)
+        def wrapped(*args, **kwargs):
+            if current_user.get_role() not in roles:
+                return role_error(roles)
+            return f(*args, **kwargs)
+        return wrapped
+    return wrapper
 
 #
 # Template Views
@@ -147,21 +148,31 @@ def logout():
     return redirect(url_for('index'))
 
 #
+# Admin endpoints
+#
+
+@app.route('/api/admin/stock/delete')
+@login_required
+@requires_roles('admin')
+def admin_remove():
+    meme = request.args.get("meme")
+    if meme:
+        stock = models.Stock.objects.filter(name=meme).first()
+        if stock:
+            stock.blacklist()
+            return success()
+    return fail()
+
+#
 # Publically available APIS
 # 
 
-@app.route('/api/stock', methods=['GET','DELETE'])
+@app.route('/api/stock')
 def stock():
     meme = request.args.get("meme")
     stock = models.Stock.objects.filter(name=meme).only('name','price','trend').first()
     if stock:
-        if request.method == 'GET':
-            return Response(stock.to_json(), mimetype="application/json")
-        elif request.method == 'DELETE':
-            if current_user.is_admin:
-                pass
-            else:
-                return role_error('admin')
+        return Response(stock.to_json(), mimetype="application/json")
     else:
         return jsonify({})
 
@@ -199,7 +210,7 @@ def oauth_authorized(resp):
 
 @app.route('/api/stocks')
 def stocks():
-    all_stocks = models.Stock.objects.only('name','price','trend').order_by('-price')
+    all_stocks = models.Stock.objects(blacklisted=False).only('name','price','trend').order_by('-price')
     return Response(all_stocks.to_json(), mimetype="application/json")
 
 @app.route('/api/history')

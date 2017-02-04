@@ -22,16 +22,22 @@ class Stock(Document):
     price=FloatField(required=True)
     history=EmbeddedDocumentListField(StockHistory)
     trend=FloatField()
+    blacklisted=BooleanField()
 
     def buy_one(self):
+        if self.blacklisted:
+            return
         self.price += 1
         hist = StockHistory()
         hist.init(self.price)
         self.history.append(hist)
         self.trend = 1.0
+        self.blacklisted = False
         self.save()
 
     def sell_one(self):
+        if self.blacklisted:
+            return
         self.price -= 1
         hist = StockHistory()
         hist.init(self.price)
@@ -41,14 +47,23 @@ class Stock(Document):
 
     def get_value(self, amount):
         """Get the current evaluation of a stock"""
-        total_worth = (self.price * (self.price + 1)) / 2.0
-        other_worth = 0
-        if amount < self.price:
-            # Others own shares...
-            not_my_shares = self.price - amount
-            other_worth = (not_my_shares*(not_my_shares+1)) / 2.0
-        return total_worth - other_worth
+        if amount > 0:
+            total_worth = (self.price * (self.price + 1)) / 2.0
+            other_worth = 0
+            if amount < self.price:
+                # Others own shares...
+                not_my_shares = self.price - amount
+                other_worth = (not_my_shares*(not_my_shares+1)) / 2.0
+            return total_worth - other_worth
+        return 0
 
+    def blacklist(self):
+        """
+        Flag the meme as blacklisted, and don't show on the main page.
+        It will continue to show in a shareholder's portfolio, but they cannot buy or sell.
+        """
+        self.blacklisted = True
+        self.save()
 
 class User(Document):
     # Flask Login Stuff
@@ -124,6 +139,11 @@ class User(Document):
         """
         return self.fb_id
 
+    def get_role(self):
+        if self.admin:
+            return 'admin'
+        return 'user'
+
     @property
     def is_authenticated(self):
         return True
@@ -139,3 +159,10 @@ class User(Document):
     @property
     def is_admin(self):
         return self.admin
+
+
+def sanity_checks():
+    stocks = Stock.objects(blacklisted__ne=True)
+    for stock in stocks:
+        stock.blacklisted = False
+        stock.save()
