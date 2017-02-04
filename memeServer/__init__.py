@@ -11,7 +11,6 @@ from mongoengine import DoesNotExist
 
 from . import models
 from . import facebookShim
-from . import imports
 
 #
 # App init
@@ -64,6 +63,16 @@ def load_user_from_request(request):
             return user
         return None
     return None
+
+# If local debug, bypass auth and assume the user is authenticated...
+def get_local_user():
+    name = "LocalUser"
+    user = models.User.objects.filter(name=name).first()
+    if not user:
+        user = models.User()
+        user.init(name, '0')
+        user.save()
+    return user
 
 #
 # Template Views
@@ -124,7 +133,12 @@ def logout():
 def login():
     """ /login is hit before and after the user gets to facebook. """
     callback_base = settings.SERVER_NAME
-    return facebook.authorize(callback=callback_base + url_for("oauth_authorized"))
+    if app.config['DEBUG']:
+        # bypass auth, just login the local user and go to index
+        login_user(get_local_user())
+        return redirect(url_for('index'))
+    else:
+        return facebook.authorize(callback=callback_base + url_for("oauth_authorized"))
 
 @app.route('/oauth-authorized')
 @facebook.authorized_handler
