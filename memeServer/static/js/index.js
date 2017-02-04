@@ -42,7 +42,7 @@ function updateMarket(){
 
 function update() {
     var portfolio = $("#jsonP");
-    if (portfolio){
+    if (portfolio.length > 0){
         $.getJSON(base_url+'/api/me', function(data) {
             var portfolioText = "Money: " + data['money'] + "\n";
             portfolioText += "Stocks: \n";
