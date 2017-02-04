@@ -42,16 +42,11 @@ function updateMarket(){
 
 function update() {
   $.getJSON(base_url+'/api/me', function(data) {
-        var portfolioText = JSON.stringify(data, undefined, 2);
-        // portfolioText = "Money: " + data['money']
-        // Removes brackets
-        portfolioText = portfolioText.substring(2, portfolioText.length-1).replace(/{(.*)/, '').replace(/(.*)}/, '');
-        // Removes quotation marks and capitalize money and stocks
-        portfolioText = portfolioText.replace(/"(.*)"(:)/gi, "$1$2").replace(/money/,"Money").replace(/stocks/, "Stocks");
-        // Removes zero value stocks
-        portfolioText = portfolioText.replace(/\n(.*): 0(,|\s)/gi,'');
-        // Removes commas
-        portfolioText = portfolioText.replace(/(.*: \d+),(\s*\n)/gi, "$1$2");
+        var portfolioText = "Money: " + data['money'] + "\n";
+        portfolioText += "Stocks: \n";
+        for (var i=0;i<data['stocks'].length;i++){
+            portfolioText+= "  " + data['stocks'][i]['price'] + " : " + data['stocks'][i]['name'] + "\n";
+        }
         document.getElementById("jsonP").innerHTML = portfolioText;
         updateMarket();
     });
