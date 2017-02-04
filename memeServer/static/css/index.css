@@ -69,6 +69,10 @@ body > .container-fluid {
 #jsonP{
     overflow-x: hidden;
 }
+#social {
+    width: 100%;
+    margin: 10px 0px;
+}
 #logout {
     width: 100%;
 }
