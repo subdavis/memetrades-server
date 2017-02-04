@@ -11,7 +11,7 @@ function tableCreate(el, data)
         tr.setAttribute("class", "economy");
 
         var td_price = tr.insertCell();
-        td_price.appendChild(document.createTextNode(data[i]['price']));
+        td_price.appendChild(document.createTextNode('$' + data[i]['price']));
         var td_trend = tr.insertCell();
         td_trend.appendChild(document.createTextNode(data[i]['trend'] ? trend_symbol(data[i]['trend']): ""));
         var td_value = tr.insertCell();

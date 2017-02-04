@@ -17,7 +17,7 @@ tr.economy {
 tr.economy td{
     padding: 0px 0px;
     /*border: 1px solid black;*/
-    min-width: 30px;
+    min-width: 50px;
 }
 tr.economy:hover {
     font-weight: 700;
