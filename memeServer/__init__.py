@@ -102,15 +102,19 @@ def requires_roles(*roles):
 
 @app.route('/')
 def index():
+    leaders = models.get_leaders()
     return render_template('index.html',
-        base_url=settings.SERVER_NAME)
+        base_url=settings.SERVER_NAME,
+        leaders=leaders)
 
 @app.route('/stock/<stockid>')
 def index_stock(stockid):
     try:
         stock = models.Stock.objects.filter(id=stockid).first()
+        leaders = models.get_leaders()
         return render_template('index.html',
             base_url=settings.SERVER_NAME,
+            leaders=leaders,
             stock=stock)
     except DoesNotExist as e:
         return redirect(url_for('index'))
@@ -188,6 +192,10 @@ def stock():
         return Response(stock.to_json(), mimetype="application/json")
     else:
         return jsonify({})
+
+@app.route('/api/leaders')
+def leaders():
+    return jsonify(models.get_leaders())
 
 @app.route('/login')
 def login():

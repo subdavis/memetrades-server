@@ -175,18 +175,42 @@ class User(Document):
         return self.admin
 
 
+def get_leaders():
+    result = User._get_collection().aggregate([
+            {
+                '$project' : { 
+                    'name': 1, 
+                    'fb_id': 1,
+                    'total': {'$add': ['$money', '$stock_value'] }
+                }
+            },
+            { '$sort': {'total': -1} },
+            { '$limit': 20 }
+        ])
+    ret = []
+    for item in result:
+        item['name'] = ''.join(w[0] for w in item['name'].split())
+        ret.append(item)
+    return ret
+
+
 def sanity_checks():
+    """
+    Function for enforcing new database rules on startup
+    """
+
     # Add Blacklisting
-    # stocks = Stock.objects(blacklisted__ne=True)
+    # stocks = Stock.objects(blacklisted__exists=False)
     # for stock in stocks:
     #     stock.blacklisted = False
     #     stock.save()
 
     # Add stock_value property
-    users = User.objects(stock_value__exists=False)
-    for user in users:
-        holdings = user.get_holdings()
-        user.stock_value = 0.0;
-        for item in holdings:
-            user.stock_value += Stock.objects.get(id=item['id']).get_value(item['amount'])
-        user.save()
+    # users = User.objects(stock_value__exists=False)
+    # for user in users:
+    #     holdings = user.get_holdings()
+    #     user.stock_value = 0.0;
+    #     for item in holdings:
+    #         user.stock_value += Stock.objects.get(id=item['id']).get_value(item['amount'])
+    #     user.save()
+    pass
