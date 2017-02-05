@@ -23,6 +23,6 @@ function graph(meme, base_url) {
       ]
     });
     chart.render();
-    $(".canvasjs-chart-canvas").css("position", "relative"); // Because canvasjs is bugged...
+    // $(".canvasjs-chart-canvas").css("position", "relative"); // Because canvasjs is bugged...
   });
 }

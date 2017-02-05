@@ -103,7 +103,14 @@ def requires_roles(*roles):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html',
+        base_url=settings.SERVER_NAME)
+
+@app.route('/stock/<stockid>')
+def index_stock(stockid):
+    return render_template('index.html',
+        base_url=settings.SERVER_NAME,
+        stock=models.Stock.objects.with_id(stockid))
 
 #
 # Private APIs
@@ -170,7 +177,7 @@ def admin_remove():
 @app.route('/api/stock')
 def stock():
     meme = request.args.get("meme")
-    stock = models.Stock.objects.filter(name=meme).only('name','price','trend').first()
+    stock = models.Stock.objects.filter(name=meme).only('name','price','trend','id').first()
     if stock:
         return Response(stock.to_json(), mimetype="application/json")
     else:

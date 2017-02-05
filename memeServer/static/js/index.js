@@ -13,11 +13,10 @@ function board_display(meme){
     $.get('/api/stock', {meme:meme}, function(data){
         $("#selected-price").text("Price: $" + data['price']);
         $("#selected-trend").empty().text("Trend: ").append(trend_symbol(data['trend']));
-        $("#selected-link").attr("href", "http://memetrades.com?active=" + meme);
+        $("#selected-link").attr("href", "/stock/" + data['_id']['$oid']);
     });
     graphed = meme;
     graph(meme, base_url);
-    $(".canvasjs-chart-canvas").css("position", "relative");
 }
 
 function tableCreate(el, data)
@@ -90,11 +89,10 @@ function remove(){
 }
 
 function init(){
-    api_key = getUrlParameter("api_key");
-    update();
-    var active = getUrlParameter("active");
-    if (active)
+    var active = $("#selected-stock").text();
+    if (active != '') // TODO: Slight hack...  Maybe I can do this better.
         board_display(active);
+    update();
     updateMarket();
     setInterval(updateMarket, 3000);
 }

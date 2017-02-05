@@ -45,6 +45,9 @@ class Stock(Document):
         self.trend = -1.0
         self.save()
 
+    def get_id(self):
+        return str(self.id)
+
     def get_value(self, amount):
         """Get the current evaluation of a stock"""
         if amount > 0:
