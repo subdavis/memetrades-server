@@ -40,9 +40,6 @@ input.buysell {
 /*TODO: Make floating buy/sell box prettier, esp. when screen is not maximized*/
 .buysellbox {
     background-color: rgba(0, 0, 0, 0.7);
-    position: fixed;
-    bottom: 25px;
-    left: 0px;
     padding-bottom: 10px;
     border-top-left-radius: 15px;
     border-top-right-radius: 15px;
@@ -97,15 +94,23 @@ body > .container-fluid {
 }
 
 @media (min-width:0px){
-    .fixed {
-        position: relative;
+    .buysellbox {
+        position: inherit;
+    }
+    #buysellpadding {
+        display: none;
     }
 }
-/*@media (min-width:768px){
-    .fixed {
+@media (min-width:768px){
+    .buysellbox {
         position: fixed;
+        bottom: 25px;
+        left: 0px;    
     }
-}*/
+    #buysellpadding {
+        display: block;
+    }
+}
 
 #tbm {
     position: fixed;

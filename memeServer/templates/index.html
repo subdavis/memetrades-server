@@ -58,37 +58,29 @@
                 
                 <!-- 
                 <h1><a href="visualizer">Visualizer</a></h1> -->
-
-                <h1>API Docs:</h1>
-                your stocks:
-                <pre>/api/me</pre>
-                all stocks:
-                <pre>/api/stocks</pre>
-                buy:
-                <pre>/api/buy?meme=yourmemehere</pre>
-                sell:
-                <pre>/api/sell?meme=yourmemehere</pre>
-                price history:
-                <pre>/api/history?meme=yourmemehere</pre>
-                recent transactions:
-                <pre>/api/meme/recent</pre>
-                single stock info:
-                <pre>/api/stock?meme=yourmemehere</pre>
-
-                {% if current_user.is_authenticated %}
-                    Your API key: append to query
-                    <pre>api_key={{ current_user.api_key }}</pre>
+                <h2>About MemeTrades.com</h2>
+                <p>We the developers believe that civilization is entering the golden age of meme trading.</p>
+                <h2>How this thing works</h2>
+                <p> You must sign in with facebook to buy.  We won't send you email, notifications, or anything of the sort. Click memes to select them, then buy/sell.  Meme not listed?  Type or paste it into the box and buy one.  Overly offensive memes will be removed and accounts banned currently at the developer's disgression.  Don't let your memes be dreams</p>
+                <div id="buysellpadding">
+                    <br><br>
+                    <br><br>
+                    <br><br>
+                    <br><br>
                     <br>
+                </div>
+            </div>
+            <div class='buysellbox col-sm-4 col-md-3'>
+                {% if current_user.is_authenticated %}
+                    <h1> Buy and Sell </h1>
+                    <input class="buysell" type='text' name='meme' id='meme'>
+                    <br><br>
+                    <button class="buysell" onclick="sell()" width="50%"> Sell </button>
+                    <button class="buysell" onclick="buy()"> Buy </button>
+                    {% if current_user.is_admin %}
+                        <button onclick="remove()">Admin: Remove</button>
+                    {% endif %}
                 {% endif %}
-
-                Credit: <a href="http://subdavis.com">Brandon</a>
-                        <a href="http://hgreer.com">Hastings</a>
-                        <a href="https://github.com/dafondo">Austin</a>
-                        <a href="https://kylefeng28.github.io/">Kyle</a>
-                <br><br>
-                <br><br>
-                <br><br>
-                <br><br>
             </div>
             <div class="col-sm-8 col-md-9">
                 <div class="row">
@@ -118,25 +110,41 @@
                     <div id="jsonM">
                         <table></table>
                     </div>
-                    <h2>About MemeTrades.com</h2>
-                    <p>We the developers believe that civilization is entering the golden age of meme trading.</p>
-                    <h2>How this thing works</h2>
-                    <p> You must sign in with facebook to buy.  We won't send you email, notifications, or anything of the sort. Click memes to select them, then buy/sell.  Meme not listed?  Type or paste it into the box and buy one.  Overly offensive memes will be removed and accounts banned currently at the developer's disgression.  Don't let your memes be dreams</p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h3>Public API</h3>
+                            all stocks:
+                            <pre>/api/stocks</pre>
+                            price history:
+                            <pre>/api/history?meme=yourmemehere</pre>
+                            recent transactions:
+                            <pre>/api/meme/recent</pre>
+                            single stock info:
+                            <pre>/api/stock?meme=yourmemehere</pre>
+                        </div>
+                        <div class="col-md-6">
+                                <h3>Autenticated API</h3>
+                                your stocks:
+                                <pre>/api/me?api_key=yourkey</pre>
+                                buy:
+                                <pre>/api/buy?meme=yourmemehere&api_key=yourkey</pre>
+                                sell:
+                                <pre>/api/sell?meme=yourmemehere&api_key=yourkey</pre>
+                                {% if current_user.is_authenticated %}
+                                    Your api_key
+                                    <pre>{{ current_user.api_key }}</pre>
+                                {% else %}
+                                    <a href="/login">Sign in with Facebook</a> to get your key
+                                {% endif %}
+                        </div>
+                    </div>
+                    Credit: <a href="http://subdavis.com">Brandon</a>
+                        <a href="http://hgreer.com">Hastings</a>
+                        <a href="https://github.com/dafondo">Austin</a>
+                        <a href="https://kylefeng28.github.io/">Kyle</a>
                 </div>
             </div>
         </div>
-    </div>
-    <div class='buysellbox col-sm-4 col-md-3'>
-        {% if current_user.is_authenticated %}
-            <h1> Buy and Sell </h1>
-            <input class="buysell" type='text' name='meme' id='meme'>
-            <br><br>
-            <button class="buysell" onclick="sell()" width="50%"> Sell </button>
-            <button class="buysell" onclick="buy()"> Buy </button>
-            {% if current_user.is_admin %}
-                <button onclick="remove()">Admin: Remove</button>
-            {% endif %}
-        {% endif %}
     </div>
     <div class="footer">
         <marquee behavior="scroll" direction="left">Breaking news.  Memes trading at record highs.  memetrades.com is the new gold standard.  Dont type thebeemovie.  Thanks for your cooperation.</marquee>
