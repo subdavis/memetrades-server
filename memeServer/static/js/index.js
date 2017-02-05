@@ -1,7 +1,12 @@
-var sortby = function(a, b) {return b[3] - a[3]};
 var base_url = ""
 var graphed = "";
 
+function is_authenticated(){
+    var portfolio = $("#jsonP");
+    if (portfolio.length > 0)
+        return true;
+    return false;
+}
 function tableCreate(el, data)
 {
     var tbl  = document.createElement("table");
@@ -21,8 +26,6 @@ function tableCreate(el, data)
 
 }
 
-var oldData;
-var oldDeltas = {};
 function updateMarket(){
     $.getJSON(base_url+'/api/stocks', function(data) {
         if (graphed == ""){
@@ -33,7 +36,8 @@ function updateMarket(){
         market.empty();
         tableCreate(market, data);
         $('td').click(function() {
-            document.getElementById("meme").value = this.innerText;
+            if (is_authenticated())
+                document.getElementById("meme").value = this.innerText;
             graph(this.innerText, base_url);
         });
         oldData = data;
@@ -41,8 +45,7 @@ function updateMarket(){
 }
 
 function update() {
-    var portfolio = $("#jsonP");
-    if (portfolio.length > 0){
+    if (is_authenticated()){
         $.getJSON(base_url+'/api/me', function(data) {
             var portfolioText = "Money: " + data['money'] + "\n";
             portfolioText += "Stocks: \n";
