@@ -9,7 +9,7 @@ from functools import wraps
 import datetime
 import re
 
-from mongoengine import DoesNotExist
+from mongoengine import DoesNotExist, ValidationError
 
 from . import models
 from . import facebookShim
@@ -97,9 +97,8 @@ def requires_roles(*roles):
     return wrapper
 
 #
-# Template Views
+# Template webviews
 #
-
 
 @app.route('/')
 def index():
@@ -108,9 +107,15 @@ def index():
 
 @app.route('/stock/<stockid>')
 def index_stock(stockid):
-    return render_template('index.html',
-        base_url=settings.SERVER_NAME,
-        stock=models.Stock.objects.with_id(stockid))
+    try:
+        stock = models.Stock.objects.filter(id=stockid).first()
+        return render_template('index.html',
+            base_url=settings.SERVER_NAME,
+            stock=stock)
+    except DoesNotExist as e:
+        return redirect(url_for('index'))
+    except ValidationError as e:
+        return redirect(url_for('index'))
 
 #
 # Private APIs
@@ -122,7 +127,8 @@ def memes():
     return jsonify({
         "money": current_user.money,
         "stocks": current_user.get_holdings(),
-        "api_key": current_user.api_key
+        "api_key": current_user.api_key,
+        "stock_value": current_user.stock_value
     })
 
 @app.route('/api/buy')

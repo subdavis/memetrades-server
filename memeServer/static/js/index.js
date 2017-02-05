@@ -57,15 +57,13 @@ function update() {
     if (is_authenticated()){
         $.getJSON(base_url+'/api/me', function(data) {
             var portfolioText = "Money: " + data['money'] + "\n";
+            portfolioText += "Holdings value: " + data['stock_value'] + "\n";
             portfolioText += "Stocks: \n";
-            var total_value = 0;
             for (var i=0;i<data['stocks'].length;i++){
                 if (data['stocks'][i]['amount'] > 0){
-                    total_value += data['stocks'][i]['value'];
                     portfolioText+= "  " + data['stocks'][i]['amount'] + " : " + data['stocks'][i]['name'] + "\n";
                 }
             }
-            portfolioText = "Holdings value: " + total_value + "\n" + portfolioText;
             document.getElementById("jsonP").innerHTML = portfolioText;
             updateMarket();
         });

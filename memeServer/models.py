@@ -26,7 +26,7 @@ class Stock(Document):
 
     def buy_one(self):
         if self.blacklisted:
-            return
+            return False
         self.price += 1
         hist = StockHistory()
         hist.init(self.price)
@@ -34,16 +34,18 @@ class Stock(Document):
         self.trend = 1.0
         self.blacklisted = False
         self.save()
+        return True
 
     def sell_one(self):
         if self.blacklisted:
-            return
+            return False
         self.price -= 1
         hist = StockHistory()
         hist.init(self.price)
         self.history.append(hist)
         self.trend = -1.0
         self.save()
+        return True
 
     def get_id(self):
         return str(self.id)
@@ -68,24 +70,26 @@ class Stock(Document):
         self.blacklisted = True
         self.save()
 
+
 class User(Document):
-    # Flask Login Stuff
     fb_id=StringField(required=True, primary_key=True) #Primary 
     holdings=DictField()
     name=StringField(required=True)
     money=FloatField(required=True)
+    stock_value=FloatField(required=True)
     api_key=StringField(required=True)
     admin=BooleanField()
 
     # holdings Example 
     # { 
-    #    "stock_id": number
+    #    "stock_id": amount
     # }
 
     def init(self, name, fb_id):
         self.fb_id = fb_id
         self.name = name
         self.money = settings.INITIAL_MONEY
+        self.stock_value = 0
         self.holdings = {}
         self.api_key = utils.get_new_key()
         self.admin = False
@@ -99,37 +103,44 @@ class User(Document):
         """
         Step 1: modify the user holdings
         Step 2: modify the market price
+        Step 3: modify the user account totals
         """
         if (self.money > stock.price and not stock.blacklisted):
             if str(stock.id) in self.holdings.keys():
                 self.holdings[str(stock.id)] += 1
             else:
                 self.holdings[str(stock.id)] = 1
-            stock.buy_one()
-            self.money -= stock.price
-            self.save()
-            return True
+            if stock.buy_one():
+                self.stock_value += stock.price
+                self.money -= stock.price
+                self.save()
+                return True
         return False
 
     def sell_one(self, stock):
         """
         Step 1: modify the user holdings
-        Step 2: modify the market price
+        Step 2: modify the suer account totals
+        Step 3: modify the market price
         """
         if str(stock.id) in self.holdings.keys() and not stock.blacklisted:
             if self.holdings[str(stock.id)] >= 1:
                 self.money += stock.price
+                self.stock_value -= stock.price
                 self.holdings[str(stock.id)] -= 1
-                stock.sell_one()
-                self.save()
-            return False
+                if stock.sell_one():
+                    self.save()
+                    return True
         return False
 
     def get_holdings(self):
+        """
+        Process this server-side so the client doesn't have to make n requests to resolve each ID
+        """
         ret = [{
                 "name": Stock.objects.get(id=key).name, 
-                "amount": self.holdings[key], 
-                "value":Stock.objects.get(id=key).get_value(self.holdings[key]) 
+                "amount": self.holdings[key],
+                "id": key
             } for key in self.holdings.keys()]
         ret = sorted(ret, 
             key=lambda k: k['amount'], 
@@ -165,7 +176,17 @@ class User(Document):
 
 
 def sanity_checks():
-    stocks = Stock.objects(blacklisted__ne=True)
-    for stock in stocks:
-        stock.blacklisted = False
-        stock.save()
+    # Add Blacklisting
+    # stocks = Stock.objects(blacklisted__ne=True)
+    # for stock in stocks:
+    #     stock.blacklisted = False
+    #     stock.save()
+
+    # Add stock_value property
+    users = User.objects(stock_value__exists=False)
+    for user in users:
+        holdings = user.get_holdings()
+        user.stock_value = 0.0;
+        for item in holdings:
+            user.stock_value += Stock.objects.get(id=item['id']).get_value(item['amount'])
+        user.save()
