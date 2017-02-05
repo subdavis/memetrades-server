@@ -4,8 +4,8 @@ function graph(meme, base_url) {
     dataPoints.push({x:new Date(Date.now()), y:dataPoints[dataPoints.length - 1]["y"]});
     var chart = new CanvasJS.Chart("chartContainer",
     {
-      title:{
-        text: "Price of " + meme },
+      // title:{
+      //   text: "Price of " + meme },
 
       axisX:{
         title: "time",

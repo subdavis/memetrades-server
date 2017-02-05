@@ -90,11 +90,30 @@
                 <br><br>
             </div>
             <div class="col-sm-8 col-md-9">
-                <div id="graph">
-                    <div id="chartContainer" style="height: 300px; width: 100%;">
+                <div class="row">
+                    <div class='col-sm-12'>
+                        <center>
+                            <h2 id="selected-stock">MemeTrades.com</h2>
+                        </center>
                     </div>
+                    <div class="col-md-10">
+                        <div id="graph">
+                            <div id="chartContainer" style="height: 300px; width: 100%;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <h3 id="selected-price">Price:</h3>
+                        <h3 id="selected-trend">Trend:</h3>
+                        <h3>Link:
+                            <a id="selected-link" href="#">
+                                <img src="{{ url_for('static', filename='img/link.png') }}" width=32 height=32>
+                            </a>
+                        </h3>
+                    </div>
+                </div>
                 <div id="market">
-                    <h1> Market Prices: </h1>
+                    <h3> Market Prices: </h3>
                     <div id="jsonM">
                         <table></table>
                     </div>
@@ -121,7 +140,7 @@
     <div class="footer">
         <marquee behavior="scroll" direction="left">Breaking news.  Memes trading at record highs.  memetrades.com is the new gold standard.  Dont type thebeemovie.  Thanks for your cooperation.</marquee>
     </div>
-     <script src="{{ url_for('static', filename='js/bees.js') }}"></script>
-     <div style="display:none;" id="tbm"></div>
+    <script src="{{ url_for('static', filename='js/bees.js') }}"></script>
+    <div style="display:none;" id="tbm"></div>
 </body>
 </html>

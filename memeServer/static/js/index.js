@@ -1,5 +1,5 @@
 var base_url = ""
-var graphed = "";
+var graphed;
 
 function is_authenticated(){
     var portfolio = $("#jsonP");
@@ -7,6 +7,18 @@ function is_authenticated(){
         return true;
     return false;
 }
+
+function board_display(meme){
+    $("#selected-stock").text(meme);
+    $.get('/api/stock', {meme:meme}, function(data){
+        $("#selected-price").text("Price: $" + data['price']);
+        $("#selected-trend").empty().text("Trend: ").append(trend_symbol(data['trend']));
+        $("#selected-link").attr("href", "http://memetrades.com?active=" + meme);
+    });
+    graphed = meme;
+    graph(meme, base_url);
+}
+
 function tableCreate(el, data)
 {
     var tbl  = document.createElement("table");
@@ -28,17 +40,16 @@ function tableCreate(el, data)
 
 function updateMarket(){
     $.getJSON(base_url+'/api/stocks', function(data) {
-        if (graphed == ""){
-            graphed = data[0]['name'];
-            graph(graphed, base_url);
-        }
+        if (graphed === undefined)
+            board_display(data[0]['name']);
+
         var market = $("#jsonM");
         market.empty();
         tableCreate(market, data);
         $('td').click(function() {
             if (is_authenticated())
                 document.getElementById("meme").value = this.innerText;
-            graph(this.innerText, base_url);
+            board_display(this.innerText);
         });
         oldData = data;
      });
@@ -68,7 +79,6 @@ function sell() {
     $.get(base_url+"/api/sell", {meme: meme}, update);
 }
 
-
 function buy() {
     var meme = document.getElementById("meme").value;
     $.get(base_url+"/api/buy", {meme: meme}, update);
@@ -84,10 +94,8 @@ function init(){
     api_key = getUrlParameter("api_key");
     update();
     var active = getUrlParameter("active");
-    if (active){
-        graphed = active;
-        graph(graphed, base_url);
-    }
+    if (active)
+        board_display(active);
     updateMarket();
     setInterval(updateMarket, 3000);
 }

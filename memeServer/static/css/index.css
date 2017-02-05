@@ -76,6 +76,10 @@ body > .container-fluid {
 #logout {
     width: 100%;
 }
+#selected-stock {
+    overflow-x: hidden;
+    white-space: nowrap;
+}
 .trend_up {
     color: green;
 }
