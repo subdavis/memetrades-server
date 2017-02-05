@@ -17,6 +17,7 @@ function board_display(meme){
     });
     graphed = meme;
     graph(meme, base_url);
+    $(".canvasjs-chart-canvas").css("position", "relative");
 }
 
 function tableCreate(el, data)
@@ -35,14 +36,12 @@ function tableCreate(el, data)
         td_value.appendChild(document.createTextNode(data[i]['name']));
     }
     el.append(tbl);
-
 }
 
 function updateMarket(){
     $.getJSON(base_url+'/api/stocks', function(data) {
         if (graphed === undefined)
             board_display(data[0]['name']);
-
         var market = $("#jsonM");
         market.empty();
         tableCreate(market, data);

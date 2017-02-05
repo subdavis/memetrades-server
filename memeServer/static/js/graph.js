@@ -4,9 +4,6 @@ function graph(meme, base_url) {
     dataPoints.push({x:new Date(Date.now()), y:dataPoints[dataPoints.length - 1]["y"]});
     var chart = new CanvasJS.Chart("chartContainer",
     {
-      // title:{
-      //   text: "Price of " + meme },
-
       axisX:{
         title: "time",
         gridThickness: 2,
@@ -26,5 +23,6 @@ function graph(meme, base_url) {
       ]
     });
     chart.render();
+    $(".canvasjs-chart-canvas").css("position", "relative"); // Because canvasjs is bugged...
   });
 }
