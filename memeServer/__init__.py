@@ -121,7 +121,7 @@ def memes():
 @app.route('/api/buy')
 @login_required
 def buy():
-    meme = request.args.get("meme")
+    meme = request.args.get("meme").strip()
     stock = models.Stock.objects.filter(name=meme).first()
     if not stock:
         stock = models.Stock(name=meme, price=0, history=[])
