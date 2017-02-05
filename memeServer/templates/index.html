@@ -108,7 +108,28 @@
                 <div id="market">
                     <h3> Market Prices: </h3>
                     <div id="jsonM">
-                        <table></table>
+                        <table>
+                            {% for s in stocks %}
+                            <tr class='economy'>
+                                <td>${{ s.price|int }}</td>
+                                <td>
+                                    {% if s.trend > 0 %}
+                                        <span class='trend_up'>⬆</span>
+                                    {% else %}
+                                        <span class='trend_down'>⬇</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ s.name }}</td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                    <div class='pagination'>
+                        <center>
+                            <a href="?page={{ page - 1 if page > 1 else 1 }}" onclick="prev()">⇦</a>
+                            <span id="pagenumber">{{ page }}</span> 
+                            <a href="?page={{ page + 1 }}" onclick="next()">⇨</a>
+                        </center>
                     </div>
                     <div class="row">
                         <div class="col-md-6">
@@ -123,7 +144,7 @@
                             <pre>/api/stock?meme=yourmemehere</pre>
                         </div>
                         <div class="col-md-6">
-                                <h3>Autenticated API</h3>
+                                <h3>Authenticated API</h3>
                                 your stocks:
                                 <pre>/api/me?api_key=yourkey</pre>
                                 buy:

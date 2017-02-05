@@ -1,5 +1,6 @@
 var base_url = ""
 var graphed;
+var page;
 
 function is_authenticated(){
     var portfolio = $("#jsonP");
@@ -38,7 +39,7 @@ function tableCreate(el, data)
 }
 
 function updateMarket(){
-    $.getJSON(base_url+'/api/stocks', function(data) {
+    $.getJSON(base_url+'/api/stocks',{page:page}, function(data) {
         if (graphed === undefined)
             board_display(data[0]['name']);
         var market = $("#jsonM");
@@ -90,8 +91,8 @@ function init(){
     var active = $("#selected-stock").text();
     if (active != '') // TODO: Slight hack...  Maybe I can do this better.
         board_display(active);
+    page = $("#pagenumber").text();
     update();
-    updateMarket();
     setInterval(updateMarket, 3000);
 }
 

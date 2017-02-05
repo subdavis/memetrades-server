@@ -65,7 +65,6 @@ def load_user(fb_id):
 
 @login_manager.request_loader
 def load_user_from_request(request):
-
     # first, try to login using the api_key url arg
     api_key = request.args.get('api_key')
     if api_key:
@@ -100,22 +99,33 @@ def requires_roles(*roles):
 # Template webviews
 #
 
+def get_paged_stocks(page):
+    page = int(page)
+    offset = (page - 1) * settings.STOCKS_PER_PAGE
+    return models.Stock.objects(blacklisted=False).only('name','price','trend').skip(offset).limit(settings.STOCKS_PER_PAGE).order_by('-price')
+
 @app.route('/')
 def index():
+    page = int(request.args.get('page')) if request.args.get('page') else 1
     leaders = models.get_leaders()
     return render_template('index.html',
         base_url=settings.SERVER_NAME,
-        leaders=leaders)
+        leaders=leaders,
+        stocks=get_paged_stocks(page),
+        page=page)
 
 @app.route('/stock/<stockid>')
 def index_stock(stockid):
     try:
+        page = int(request.args.get('page')) if request.args.get('page') else 1
         stock = models.Stock.objects.filter(id=stockid).first()
         leaders = models.get_leaders()
         return render_template('index.html',
             base_url=settings.SERVER_NAME,
             leaders=leaders,
-            stock=stock)
+            stock=stock,
+            stocks=get_paged_stocks(page),
+            page=page)
     except DoesNotExist as e:
         return redirect(url_for('index'))
     except ValidationError as e:
@@ -231,7 +241,9 @@ def oauth_authorized(resp):
 
 @app.route('/api/stocks')
 def stocks():
-    all_stocks = models.Stock.objects(blacklisted=False).only('name','price','trend').order_by('-price')
+    page = int(request.args.get('page')) if request.args.get('page') else 1
+    offset = (page - 1) * settings.STOCKS_PER_PAGE
+    all_stocks = get_paged_stocks(page)
     return Response(all_stocks.to_json(), mimetype="application/json")
 
 @app.route('/api/history')

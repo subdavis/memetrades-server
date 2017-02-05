@@ -12,6 +12,8 @@ SECRET_KEY="EXAMPLE"
 INITIAL_MONEY=1000.0
 # Length in characters of the generated API key.
 API_KEY_LENGTH=32
+# Number of memes per page for pagination
+STOCKS_PER_PAGE=50
 
 # Get this from developers.facebook.com 
 FACEBOOK = {
