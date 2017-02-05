@@ -169,5 +169,9 @@ color: yellow;
 .pagination{
     text-align: center;
     width: 100%;
+    font-size:20px;
+    border: 1px solid;
+}
+.pagination a{
     font-size: 25px;
 }

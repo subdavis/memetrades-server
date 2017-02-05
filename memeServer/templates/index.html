@@ -125,11 +125,9 @@
                         </table>
                     </div>
                     <div class='pagination'>
-                        <center>
-                            <a href="?page={{ page - 1 if page > 1 else 1 }}" onclick="prev()">⇦</a>
-                            <span id="pagenumber">{{ page }}</span> 
-                            <a href="?page={{ page + 1 }}" onclick="next()">⇨</a>
-                        </center>
+                        <a href="?page={{ page - 1 if page > 1 else 1 }}" style="float: left;">&nbsp;⇦</a>
+                            Page: <span id="pagenumber">{{ page }}</span> 
+                        <a href="?page={{ page + 1 }}" style="float: right;">⇨&nbsp;</a>
                     </div>
                     <div class="row">
                         <div class="col-md-6">
