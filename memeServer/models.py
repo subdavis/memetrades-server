@@ -118,8 +118,8 @@ class User(Document):
                 self.holdings[str(stock.id)] = 1
             if stock.buy_one():
                 self.money -= stock.price
-                self.save()
                 self.calculate_total_holdings_value()
+                self.save()
                 return True
         return False
 
