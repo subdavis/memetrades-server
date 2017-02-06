@@ -51,10 +51,11 @@ function updateMarket(){
             board_display(this.innerText);
         });
         oldData = data;
-     });
+    });
 }
 
-function update() {
+function update(meme) {
+    // Called, among other things, when buy and sell are clicked.
     if (is_authenticated()){
         $.getJSON(base_url+'/api/me', function(data) {
             var portfolioText = "Money: " + data['money'] + "\n";
@@ -69,22 +70,30 @@ function update() {
             updateMarket();
         });
     }
+    if (meme)
+        board_display(meme);
 }
 
 function sell() {
     var meme = document.getElementById("meme").value;
-    $.get(base_url+"/api/sell", {meme: meme}, update);
+    $.get(base_url+"/api/sell", {meme: meme}, function(){
+        update(meme);
+    });
 }
 
 function buy() {
     var meme = document.getElementById("meme").value;
-    $.get(base_url+"/api/buy", {meme: meme}, update);
+    $.get(base_url+"/api/buy", {meme: meme}, function(){
+        update(meme);
+    });
 }
 
 function remove(){
     /* Admin only. Don't bother, the backend will check your permissions */
     var meme = document.getElementById("meme").value;
-    $.get(base_url+"/api/admin/stock/delete", {meme: meme}, update);
+    $.get(base_url+"/api/admin/stock/delete", {meme: meme}, function(){
+        update(meme);
+    });
 }
 
 function init(){
