@@ -76,7 +76,7 @@ class User(Document):
     holdings=DictField()
     name=StringField(required=True)
     money=FloatField(required=True)
-    stock_value=FloatField(required=True)
+    stock_value = FloatField(require=True)
     api_key=StringField(required=True)
     admin=BooleanField()
 
@@ -99,12 +99,6 @@ class User(Document):
     # API for database updates
     #
 
-    def calculate_total_holdings_value(self):
-        self.stock_value = 0
-        for key in self.holdings.keys():
-            stock = Stock.objects.get(id=key)
-            self.stock_value += stock.get_value(self.holdings[key])
-
     def buy_one(self, stock):
         """
         Step 1: modify the user holdings
@@ -118,7 +112,6 @@ class User(Document):
                 self.holdings[str(stock.id)] = 1
             if stock.buy_one():
                 self.money -= stock.price
-                self.calculate_total_holdings_value()
                 self.save()
                 return True
         return False
@@ -134,7 +127,6 @@ class User(Document):
                 self.money += stock.price
                 self.holdings[str(stock.id)] -= 1
                 if stock.sell_one():
-                    self.calculate_total_holdings_value()
                     self.save()
                     return True
         return False
