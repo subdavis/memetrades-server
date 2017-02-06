@@ -70,6 +70,7 @@ def load_user_from_request(request):
     if api_key:
         user = models.User.objects(api_key=api_key).first()
         if user:
+            time.sleep(.5)
             return user
         return None
     return None
