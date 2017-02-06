@@ -8,6 +8,7 @@ import pickle
 from functools import wraps
 import datetime
 import re
+import time
 
 from mongoengine import DoesNotExist, ValidationError
 
@@ -70,7 +71,7 @@ def load_user_from_request(request):
     if api_key:
         user = models.User.objects(api_key=api_key).first()
         if user:
-            time.sleep(.5)
+            time.sleep(.25)
             return user
         return None
     return None
