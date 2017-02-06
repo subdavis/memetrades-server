@@ -99,6 +99,12 @@ class User(Document):
     # API for database updates
     #
 
+    def calculate_total_holdings_value(self):
+        self.stock_value = 0
+        for key in self.holdings.keys():
+            stock = Stock.objects.get(id=key)
+            self.stock_value += stock.get_value(self.holdings[key])
+
     def buy_one(self, stock):
         """
         Step 1: modify the user holdings
@@ -111,8 +117,8 @@ class User(Document):
             else:
                 self.holdings[str(stock.id)] = 1
             if stock.buy_one():
-                self.stock_value += stock.price
                 self.money -= stock.price
+                self.calculate_total_holdings_value()
                 self.save()
                 return True
         return False
@@ -126,9 +132,9 @@ class User(Document):
         if str(stock.id) in self.holdings.keys() and not stock.blacklisted:
             if self.holdings[str(stock.id)] >= 1:
                 self.money += stock.price
-                self.stock_value -= stock.price
                 self.holdings[str(stock.id)] -= 1
                 if stock.sell_one():
+                    self.calculate_total_holdings_value()
                     self.save()
                     return True
         return False
