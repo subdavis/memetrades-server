@@ -9,7 +9,7 @@ function graph(meme, base_url) {
     });
     
     // Create a data point at now.
-    dataPoints.push({
+    dataPoints.unshift({
       x:new Date(Date.now()), 
       y:dataPoints[dataPoints.length - 1]["y"]
     });

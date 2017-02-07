@@ -280,7 +280,7 @@ def history():
     meme = request.args.get("meme")
     stock = models.Stock.objects.filter(name=meme).first()
     if stock:
-        history = models.StockHistoryEntry.objects.filter(stock=stock).limit(60)
+        history = models.StockHistoryEntry.objects.filter(stock=stock).sort('-time').limit(50)
         return Response(history.to_json(), mimetype='application/json')
     return jsonify([])
 
