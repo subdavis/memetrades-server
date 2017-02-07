@@ -9,11 +9,23 @@ from . import settings
 connect(settings.DATABASE["name"])
 
 
+
+class StockHistory(EmbeddedDocument):
+    time=FloatField(required=True)
+    price=FloatField(required=True)
+
+    def init(self, price):
+        self.time = time.time()
+        self.price = price
+
+
+
 class Stock(Document):
     name=StringField(required=True)
     price=FloatField(required=True)
     trend=FloatField()
     blacklisted=BooleanField()
+    history=EmbeddedDocumentListField(StockHistory) 
 
     def buy_one(self):
         if self.blacklisted:
