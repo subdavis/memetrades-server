@@ -34,10 +34,20 @@
             <div class="col-sm-4 col-md-3 fixed">
                 <div id="portfolio">
                     
+                    <!-- Account info -->
                     {% if current_user.is_authenticated %}
-                        <h1> Your Portfolio: </h1>
-                        <pre id="jsonP">
-                        </pre>
+                        <h2 id="account-info">Account info:</h2>
+                        <table class='portfolio'>
+                            <tr>
+                                <td> Money:</td>
+                                <td id="account-money"> ${{ current_user.money|int }}</td>
+                            </tr>
+                            <tr>
+                                <td> Holdings worth*: </td>
+                                <td id="account-holdings">${{ current_user.stock_value|int }}</td>
+                            </tr>
+                        </table>
+                        <p>*updated occasioablly by server</p>
                         <button onclick="location.href = '/logout';" id="logout">Log Out</button>
                     {% else %}
                         <h1> Sign in to trade: </h1>
@@ -45,43 +55,38 @@
                             <a href="/login"><img src="{{ url_for('static', filename='img/fblogin.png') }}"></a>
                         </div>
                     {% endif %}
+
                     <!-- Social -->
                     <div id="Social">
                         <a href="https://twitter.com/share" class="twitter-share-button" data-show-count="false">meme trading was literally invented: http://memetrades.com</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
                         &nbsp;
-                        <iframe src="https://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fmemetrades.com&width=106&layout=button_count&action=like&size=small&show_faces=true&share=true&height=46&appId=245240242552898" width="106" height="20" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true"></iframe>
+                        <iframe src="https://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fmemetrades.com&width=106&layout=button_count&action=like&size=small&show_faces=true&share=true&height=46&appId=245240242552898" width="120" height="20" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true"></iframe>
                         &nbsp;
                         <!-- Place this tag where you want the button to render. -->
                         <a class="github-button" href="https://github.com/meme-exchange/server" data-icon="octicon-star" data-count-href="/meme-exchange/server/stargazers" data-count-api="/repos/meme-exchange/server#stargazers_count" data-count-aria-label="# stargazers on GitHub" aria-label="Star meme-exchange/server on GitHub">Star</a>
                     </div>
                 </div>
                 
+                <div class='buysellbox'>
+                    <h1>Search: </h1>
+                    <input class="buysell" onkeyup='search()' type='text' name='meme' id='meme'>
+                    <br>
+                    <button class="buysell" style="margin-top: 10px;" onclick="search()">Search</button>
+                </div>
+                
+                <div id="search-results">
+                    <table id='search-results-table'></table>
+                </div>
                 <!-- 
                 <h1><a href="visualizer">Visualizer</a></h1> -->
+                
                 <h2>About MemeTrades.com</h2>
                 <p>We the developers believe that civilization is entering the golden age of meme trading.</p>
+                
                 <h2>How this thing works</h2>
                 <p> You must sign in with facebook to buy.  We won't send you email, notifications, or anything of the sort. Click memes to select them, then buy/sell.  Meme not listed?  Type or paste it into the box and buy one.  Don't let your memes be dreams</p>
-                <div id="buysellpadding">
-                    <br><br>
-                    <br><br>
-                    <br><br>
-                    <br><br>
-                    <br>
-                </div>
             </div>
-            <div class='buysellbox col-sm-4 col-md-3'>
-                {% if current_user.is_authenticated %}
-                    <h1> Buy and Sell </h1>
-                    <input class="buysell" type='text' name='meme' id='meme'>
-                    <br><br>
-                    <button class="buysell" onclick="sell()" width="50%"> Sell </button>
-                    <button class="buysell" onclick="buy()"> Buy </button>
-                    {% if current_user.is_admin %}
-                        <button onclick="remove()">Admin: Remove</button>
-                    {% endif %}
-                {% endif %}
-            </div>
+            
             <div class="col-sm-8 col-md-9">
                 <div class="row">
                     <div class='col-sm-12'>
@@ -89,28 +94,51 @@
                             <h2 id="selected-stock">{{ stock.name if stock else '' }}</h2>
                         </center>
                     </div>
-                    <div class="col-md-10">
+                    <div class="selected col-md-12">
+                        <span id="selected-price">Price: {{ stock.price if stock else '' }}</span>
+                        <span id="selected-trend">Trend:</span>
+                        <span>Link:
+                            <a id="selected-link" href="{{ base_url+'/stock/'+stock.get_id() if stock else '#' }}">
+                                <img src="{{ url_for('static', filename='img/link.png') }}" width=32 height=32>
+                            </a>
+                        </span>
+                        {% if current_user.is_authenticated %}
+                            <button id="buy-button" style="background-color: green;" onclick="buy()">⬆ BUY</button>
+                            <button id="sell-button" style='background-color: red;' onclick="sell()">⬇ SELL</button>
+                            {% if current_user.is_admin %}
+                                <button class="buysell" onclick="remove()">Admin: Remove</button>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    <div class="col-md-12">
                         <div id="graph">
                             <div id="chartContainer" style="height: 300px; width: 100%;">
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-2">
-                        <h3 id="selected-price">Price: {{ stock.price if stock else '' }}</h3>
-                        <h3 id="selected-trend">Trend:</h3>
-                        <h3>Link:
-                            <a id="selected-link" href="{{ base_url+'/stock/'+stock.get_id() if stock else '#' }}">
-                                <img src="{{ url_for('static', filename='img/link.png') }}" width=32 height=32>
-                            </a>
-                        </h3>
+                    <div id="{{ view }}" class='col-md-12'>
+                        <ul class="nav nav-tabs">
+                          
+                          <li class='{{ "active" if view=="market" else "" }}'><a href="/">All Stocks</a></li>
+                          
+                          {% if current_user.is_authenticated %}
+                            <li class='{{ "active" if view=="portfolio" else "" }}'><a href="/portfolio">My Stocks</a></li>
+                          {% endif %}
+                        
+                        </ul>
                     </div>
-                </div>
-                <div id="market">
-                    <h3> Market Prices: </h3>
+                    <br>
                     <div id="jsonM">
                         <table>
+                            <tr class='economy-header'>
+                                <td>#</td>
+                                <td>price</td>
+                                <td>trend</td>
+                                <td>name</td>
+                            </tr>
                             {% for s in stocks %}
                             <tr class='economy'>
+                                <td>{{ s.amount if s.amount else '' }}</td>
                                 <td>${{ s.price|int }}</td>
                                 <td>
                                     {% if s.trend > 0 %}

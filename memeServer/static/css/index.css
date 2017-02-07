@@ -9,20 +9,31 @@ table {
 td {
     cursor: pointer;
 }
+table.portfolio{
+    font-size: 22px;
+    margin: 8px;
+}
 tr.economy {
     font-family: "Courier New";
     font-weight: 500;
     justify-content: left;
 }
+tr.economy-header td {
+    padding: 8px;
+}
 tr.economy td{
     padding: 0px 0px;
     /*border: 1px solid black;*/
-    min-width: 50px;
+    /*min-width: 30px;*/
+    padding: 0px 5px;
 }
 tr.economy:hover {
     font-weight: 700;
 }
-
+#create-meme {
+    color: blue;
+    text-decoration: underline;
+}
 table, th, td {
     /*border-bottom: 1px solid black;*/
     white-space: nowrap;
@@ -30,7 +41,7 @@ table, th, td {
 
 button.buysell {
     display: inline-block;
-    width: 49%;
+    width: 100%;
 }
 
 input.buysell {
@@ -39,15 +50,7 @@ input.buysell {
 
 /*TODO: Make floating buy/sell box prettier, esp. when screen is not maximized*/
 .buysellbox {
-    background-color: rgba(0, 0, 0, 0.7);
-    padding-bottom: 10px;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
-    /*z-index: 5;*/
-}
-
-.buysellbox h1 {
-    color: white;
+    margin-bottom: 10px;
 }
 
 .footer {
@@ -77,6 +80,20 @@ body > .container-fluid {
     overflow-x: hidden;
     white-space: nowrap;
 }
+.selected {
+    font-size: 22px;
+    text-align: center;
+    border: 1px solid;
+    border-radius: 5px;
+    margin: 5px;
+}
+.selected span {
+    padding: 0px 10px;
+}
+.selected button {
+    font-size: 18px;
+    margin: 5px 10px;
+}
 .trend_up {
     color: green;
 }
@@ -84,29 +101,30 @@ body > .container-fluid {
     color: red;
 }
 
-.fixed {
-/*    overflow-y: visible;
-    height: 100%;*/
-}
 #market {
     /*overflow-x: auto;*/
     /*margin-bottom: 50px;*/
 }
+.nav {
+    margin-bottom: 10px;
+    font-size: 22px;
+}
+.pagination{
+    text-align: center;
+    width: 100%;
+    font-size:20px;
+    border: 1px solid;
+}
+.pagination a{
+    font-size: 25px;
+}
 
 @media (min-width:0px){
-    .buysellbox {
-        position: inherit;
-    }
     #buysellpadding {
         display: none;
     }
 }
 @media (min-width:768px){
-    .buysellbox {
-        position: fixed;
-        bottom: 25px;
-        left: 0px;    
-    }
     #buysellpadding {
         display: block;
     }
@@ -166,12 +184,6 @@ color: yellow;
     100% { top: -170%; }
 }
 
-.pagination{
-    text-align: center;
-    width: 100%;
-    font-size:20px;
-    border: 1px solid;
-}
-.pagination a{
-    font-size: 25px;
+#search-results {
+    overflow-x: hidden;
 }

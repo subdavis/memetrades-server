@@ -135,11 +135,16 @@ class User(Document):
         """
         Process this server-side so the client doesn't have to make n requests to resolve each ID
         """
-        ret = [{
-                "name": Stock.objects.get(id=key).name, 
+        ret = []
+        for key in self.holdings.keys():
+            stock = Stock.objects.get(id=key)
+            ret.append({
+                "name": stock.name, 
                 "amount": self.holdings[key],
-                "id": key
-            } for key in self.holdings.keys()]
+                "id": key,
+                "price": stock.price,
+                "trend": stock.trend
+            })
         ret = sorted(ret, 
             key=lambda k: k['amount'], 
             reverse=True) 

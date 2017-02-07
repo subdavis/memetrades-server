@@ -110,11 +110,30 @@ def get_paged_stocks(page):
 def index():
     page = int(request.args.get('page')) if request.args.get('page') else 1
     leaders = models.get_leaders()
+    stocks = get_paged_stocks(page)
     return render_template('index.html',
+        view="market",
         base_url=settings.SERVER_NAME,
         leaders=leaders,
-        stocks=get_paged_stocks(page),
-        page=page)
+        stocks=stocks,
+        page=page,
+        stock=stocks.first())
+
+@app.route('/portfolio')
+@login_required
+def index_portfolio():
+    leaders = models.get_leaders()
+    stocks = current_user.get_holdings()
+    stock = None;
+    if len(stocks) >= 1:
+        stock = models.Stock.objects.filter(id=stocks[0]['id']).first()
+    return render_template('index.html',
+        view="portfolio",
+        base_url=settings.SERVER_NAME,
+        leaders=leaders,
+        stocks=stocks,
+        stock=stock,
+        page=1)
 
 @app.route('/stock/<stockid>')
 def index_stock(stockid):
@@ -123,6 +142,7 @@ def index_stock(stockid):
         stock = models.Stock.objects.filter(id=stockid).first()
         leaders = models.get_leaders()
         return render_template('index.html',
+            view="market",
             base_url=settings.SERVER_NAME,
             leaders=leaders,
             stock=stock,
@@ -194,7 +214,13 @@ def admin_remove():
 
 #
 # Publically available APIS
-# 
+#
+
+@app.route('/api/search')
+def search():
+    query=request.args.get("q")
+    stocks= models.Stock.objects.filter(name__icontains=query).only('name','price','trend').limit(10)
+    return Response(stocks.to_json(), mimetype="application/json")
 
 @app.route('/api/stock')
 def stock():
