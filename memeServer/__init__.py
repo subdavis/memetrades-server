@@ -281,11 +281,13 @@ def history():
     stock = models.Stock.objects.filter(name=meme).first()
     ret = []
     if stock:
-        for h in stock.history:
+        for i, h in enumerate(stock.history):
             ret.append({
                 "price": h.price,
                 "time": datetime.datetime.fromtimestamp(h.time)
             })
+            if i > 20:
+                break
     return jsonify(ret)
 
 @app.route('/api/recent')

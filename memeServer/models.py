@@ -20,7 +20,8 @@ class StockHistory(EmbeddedDocument):
 class Stock(Document):
     name=StringField(required=True)
     price=FloatField(required=True)
-    history=EmbeddedDocumentListField(StockHistory)
+    history=SortedListField(EmbeddedDocumentField(StockHistory),
+        ordering="time", reverse=True)
     trend=FloatField()
     blacklisted=BooleanField()
 
