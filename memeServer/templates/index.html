@@ -35,6 +35,9 @@
                 <div id="portfolio">
                     
                     <!-- Account info -->
+                    <div id="logo" width="100%">
+                        <img style="display: block; margin:auto;" width=250 height=250 src="{{ url_for('static', filename='img/logo.png') }}">
+                    </div>
                     {% if current_user.is_authenticated %}
                         <h2 id="account-info">Account info:</h2>
                         <table class='portfolio'>
