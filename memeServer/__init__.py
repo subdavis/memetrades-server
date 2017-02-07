@@ -261,7 +261,7 @@ def oauth_authorized(resp):
         user.init(user_data['name'], user_data['user_id'])
         user.save()
     login_user(user)
-    logger.info("Welcome, " + user.name)
+    # logger.info("Welcome, " + user.name)
     redirect_to_client = redirect(url_for('index'), code=302)
     response = app.make_response(redirect_to_client )  
     response.set_cookie('api_key',value=user.api_key)
