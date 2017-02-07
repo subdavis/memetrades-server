@@ -1,6 +1,6 @@
 function graph(meme, base_url) {
   $.getJSON(base_url + "/api/history", {meme:meme}, function(input) {
-    var dataPoints= input.map(function(pt) { return {x:new Date(pt["time"]), y:pt["price"]}});
+    var dataPoints= input.map(function(pt) { return {x:new Date(Math.round(pt["time"]*1000)), y:pt["price"]}});
     dataPoints.push({x:new Date(Date.now()), y:dataPoints[dataPoints.length - 1]["y"]});
     var chart = new CanvasJS.Chart("chartContainer",
     {

@@ -48,16 +48,18 @@ function tableCreate(el, data, query)
         var th_name = trh.insertCell();
         th_name.appendChild(document.createTextNode('name'));
         trh.setAttribute('class', 'economy-header');
-    } else {
+    }
+    else {
         //prompt to "add new"
-        var newtext = "Meme not found.";
+        var newtext = "Meme not found. ";
         if (is_authenticated())
-            newtext+="Buy ONE.";
+            newtext+="Click to inspect.";
 
         var trh = tbl.insertRow();
         var th_new = trh.insertCell();
         th_new.appendChild(document.createTextNode(newtext));
         th_new.setAttribute('id', 'create-meme');
+        $("#create-meme").off('click');
     }
 
     for (var i = 0; i < data.length; ++i)
@@ -96,8 +98,9 @@ function tableCreate(el, data, query)
     });
     if (is_authenticated()){
         $("#create-meme").click(function(){
+            $("#create-meme").off('click'); // disable clicking agian
             board_display(query);
-            buy();
+            // buy();
         });
     }
 }
@@ -114,7 +117,6 @@ function updateMarket(){
         var market = $("#jsonM");
         market.empty();
         tableCreate(market, data);
-        oldData = data;
     });
 }
 
@@ -125,16 +127,17 @@ function updatePortfolio(meme) {
             portfolio_list = data['stocks'];
             updateAccount(data['stock_value'], data['money']);
             //update table on portfolio page.
-            tableCreate($("#jsonM"), data['stocks']);           
+            if (get_view() == "portfolio")
+                tableCreate($("#jsonM"), data['stocks']);           
         });
     }
 }
 
 function update(meme){
     // Decide what to do depending on what view we are in....
-    if (is_authenticated() && get_view() == "portfolio")
+    if (is_authenticated())
         updatePortfolio();
-    else
+    if (get_view() == "market")
         updateMarket();
     if (meme)
         board_display(meme);
@@ -149,7 +152,9 @@ function sell() {
 
 function buy() {
     var meme = $("#selected-stock").text();
-    $.get(base_url+"/api/buy", {meme: meme}, function(){
+    $.getJSON(base_url+"/api/buy", {meme: meme}, function(data){
+        if (data['status'] == 'fail')
+            alert('you out of cash');
         update(meme);
     });
 }

@@ -173,7 +173,7 @@ def buy():
     meme = request.args.get("meme").strip()
     stock = models.Stock.objects.filter(name=meme).first()
     if not stock:
-        stock = models.Stock(name=meme, price=0, history=[])
+        stock = models.Stock(name=meme, price=0)
         stock.save()
 
     if current_user.buy_one(stock):
@@ -279,16 +279,10 @@ def history():
     print(request.url)
     meme = request.args.get("meme")
     stock = models.Stock.objects.filter(name=meme).first()
-    ret = []
     if stock:
-        for i, h in enumerate(stock.history):
-            ret.append({
-                "price": h.price,
-                "time": datetime.datetime.fromtimestamp(h.time)
-            })
-            if i > 20:
-                break
-    return jsonify(ret)
+        history = models.StockHistoryEntry.objects.filter(stock=stock).order_by('time').limit(40)
+        return Response(history.to_json(), mimetype='application/json')
+    return jsonify([])
 
 @app.route('/api/recent')
 def recent():   

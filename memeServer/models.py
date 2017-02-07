@@ -1,5 +1,6 @@
 from mongoengine import *
 import time
+import datetime
 
 from . import utils
 from . import settings
@@ -8,20 +9,9 @@ from . import settings
 connect(settings.DATABASE["name"])
 
 
-class StockHistory(EmbeddedDocument):
-    time=FloatField(required=True)
-    price=FloatField(required=True)
-
-    def init(self, price):
-        self.time = time.time()
-        self.price = price
-
-
 class Stock(Document):
     name=StringField(required=True)
     price=FloatField(required=True)
-    history=SortedListField(EmbeddedDocumentField(StockHistory),
-        ordering="time", reverse=True)
     trend=FloatField()
     blacklisted=BooleanField()
 
@@ -29,9 +19,11 @@ class Stock(Document):
         if self.blacklisted:
             return False
         self.price += 1
-        hist = StockHistory()
-        hist.init(self.price)
-        self.history.append(hist)
+        hist = StockHistoryEntry(
+            stock=self, 
+            time=time.time(), 
+            price=self.price)
+        hist.save()
         self.trend = 1.0
         self.blacklisted = False
         self.save()
@@ -41,9 +33,11 @@ class Stock(Document):
         if self.blacklisted:
             return False
         self.price -= 1
-        hist = StockHistory()
-        hist.init(self.price)
-        self.history.append(hist)
+        hist = StockHistoryEntry(
+            stock=self, 
+            time=time.time(), 
+            price=self.price)
+        hist.save()
         self.trend = -1.0
         self.save()
         return True
@@ -70,6 +64,12 @@ class Stock(Document):
         """
         self.blacklisted = True
         self.save()
+
+
+class StockHistoryEntry(Document):
+    stock=ReferenceField(Stock, required=True)
+    time=FloatField(required=True)
+    price=FloatField(required=True)
 
 
 class User(Document):
@@ -217,4 +217,10 @@ def sanity_checks():
     #     for item in holdings:
     #         user.stock_value += Stock.objects.get(id=item['id']).get_value(item['amount'])
     #     user.save()
+
+    # Turn embedded history into normal fucking documents
+    for s in Stock.objects:
+        for h in s.history:
+            newh = StockHistoryEntry(stock=s, time=h.time, price=h.price)
+            newh.save()
     pass
