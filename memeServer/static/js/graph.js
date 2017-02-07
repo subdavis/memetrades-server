@@ -11,7 +11,7 @@ function graph(meme, base_url) {
     // Create a data point at now.
     dataPoints.unshift({
       x:new Date(Date.now()), 
-      y:dataPoints[dataPoints.length - 1]["y"]
+      y:dataPoints[0]["y"]
     });
 
     // pick a reasonable interval
