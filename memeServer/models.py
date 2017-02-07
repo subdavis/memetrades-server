@@ -231,8 +231,8 @@ def sanity_checks():
     #     user.save()
 
     # Turn embedded history into normal fucking documents
-    for s in Stock.objects:
-        for h in s.history:
-            newh = StockHistoryEntry(stock=s, time=h.time, price=h.price)
-            newh.save()
+    # for s in Stock.objects:
+    #     for h in s.history:
+    #         newh = StockHistoryEntry(stock=s, time=h.time, price=h.price)
+    #         newh.save()
     pass
