@@ -221,15 +221,19 @@ def search():
     query=request.args.get("q")
     if query:
         stocks= models.Stock.objects.filter(
-            name__icontains=query,
-            blacklisted=False).only('name','price','trend').limit(10)
+                name__icontains=query,
+                blacklisted=False
+            ).only('name','price','trend','id').limit(10)
         return Response(stocks.to_json(), mimetype="application/json")
     return jsonify([])
 
 @app.route('/api/stock')
 def stock():
     meme = request.args.get("meme")
-    stock = models.Stock.objects.filter(name=meme).only('name','price','trend','id').first()
+    stock = models.Stock.objects.filter(
+            name=meme,
+            blacklisted=False
+        ).only('name','price','trend','id').first()
     if stock:
         return Response(stock.to_json(), mimetype="application/json")
     else:
@@ -238,6 +242,33 @@ def stock():
 @app.route('/api/leaders')
 def leaders():
     return jsonify(models.get_leaders())
+
+@app.route('/api/stocks')
+def stocks():
+    page = int(request.args.get('page')) if request.args.get('page') else 1
+    offset = (page - 1) * settings.STOCKS_PER_PAGE
+    all_stocks = get_paged_stocks(page)
+    return Response(all_stocks.to_json(), mimetype="application/json")
+
+@app.route('/api/history')
+def history():
+    print(request.url)
+    meme = request.args.get("meme")
+    stock = models.Stock.objects.filter(name=meme).first()
+    if stock:
+        history = models.StockHistoryEntry.objects.filter(stock=stock).order_by('-time').limit(200)
+        return Response(history.to_json(), mimetype='application/json')
+    return jsonify([])
+
+@app.route('/api/recent')
+def recent():   
+    # Get the 100 most recent transactions
+    recents = models.StockHistoryEntry.objects.order_by('-time').limit(100)
+    return Response(recents.to_json(), mimetype='application/json')
+
+#
+# Facebook Login Handlers
+#
 
 @app.route('/login')
 def login():
@@ -270,27 +301,6 @@ def oauth_authorized(resp):
     response = app.make_response(redirect_to_client )  
     response.set_cookie('api_key',value=user.api_key)
     return response
-
-@app.route('/api/stocks')
-def stocks():
-    page = int(request.args.get('page')) if request.args.get('page') else 1
-    offset = (page - 1) * settings.STOCKS_PER_PAGE
-    all_stocks = get_paged_stocks(page)
-    return Response(all_stocks.to_json(), mimetype="application/json")
-
-@app.route('/api/history')
-def history():
-    print(request.url)
-    meme = request.args.get("meme")
-    stock = models.Stock.objects.filter(name=meme).first()
-    if stock:
-        history = models.StockHistoryEntry.objects.filter(stock=stock).order_by('-time').limit(200)
-        return Response(history.to_json(), mimetype='application/json')
-    return jsonify([])
-
-@app.route('/api/recent')
-def recent():   
-    return jsonify(transactions[-100:])
 
 #
 # A few other helpers
