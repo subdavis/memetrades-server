@@ -43,15 +43,14 @@
                         <h2 id="account-info">Account info:</h2>
                         <table class='portfolio'>
                             <tr>
-                                <td> Money:</td>
+                                <td> 💵💵 Money:</td>
                                 <td id="account-money"> ${{ current_user.money|int }}</td>
                             </tr>
                             <tr>
-                                <td> Holdings worth*: </td>
+                                <td> 💰💰 Holdings*: </td>
                                 <td id="account-holdings">${{ current_user.stock_value|int }}</td>
                             </tr>
                         </table>
-                        <p>*updated occasioablly by server</p>
                         <button onclick="location.href = '/logout';" id="logout">Log Out</button>
                     {% else %}
                         <h1> Sign in to trade: </h1>
@@ -72,10 +71,10 @@
                 </div>
                 
                 <div class='buysellbox'>
-                    <h1>Search: </h1>
-                    <input class="buysell" onkeyup='search()' type='text' name='meme' id='meme'>
+                    <h1>🔍👁 Search: </h1>
+                    <input class="buysell" onkeyup='search()' type='text' name='meme' id='meme' placeholder="literally type a meme">
                     <br>
-                    <button class="buysell" style="margin-top: 10px;" onclick="search()">Search</button>
+                    <!-- <button class="buysell" style="margin-top: 10px;" onclick="search()">Search</button> -->
                 </div>
                 
                 <div id="search-results">
@@ -84,11 +83,18 @@
                 <!-- 
                 <h1><a href="visualizer">Visualizer</a></h1> -->
                 
-                <h2>About MemeTrades.com</h2>
+                <h2>what even is this?</h2>
+                <p> Trading memes, obvs.  You must sign in with facebook to buy.  We won't send you email, notifications, or anything of the sort. Click memes to select them, then buy/sell.  Meme not listed?  Type or paste into the search bar, then inspect and buy.  Don't let your memes be dreams.</p>
+
+                <h2>but... why?</h2>
                 <p>We the developers believe that civilization is entering the golden age of meme trading.</p>
+                <h2>who made this trash?</h2>
+                <a href="http://hgreer.com">Brandon</a>
+                and
+                <a href="https://subdavis.com">Hastings</a>
                 
-                <h2>How this thing works</h2>
-                <p> You must sign in with facebook to buy.  We won't send you email, notifications, or anything of the sort. Click memes to select them, then buy/sell.  Meme not listed?  Type or paste into the search bar, then inspect and buy.  Don't let your memes be dreams</p>
+                <h2></h2>
+                <p>*updated by server on an interval</p>
             </div>
             
             <div class="col-sm-8 col-md-9">
