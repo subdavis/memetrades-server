@@ -8,11 +8,13 @@ function graph(meme, base_url) {
       };
     });
     
-    // Create a data point at now.
-    dataPoints.unshift({
-      x:new Date(Date.now()), 
-      y:dataPoints[0]["y"]
-    });
+    if (dataPoints.length > 0){
+      // Create a data point at now.
+      dataPoints.unshift({
+        x:new Date(Date.now()), 
+        y:dataPoints[0]["y"]
+      });
+    }
 
     // pick a reasonable interval
     var start_hour = new Date(Math.round(input[0]['time']));

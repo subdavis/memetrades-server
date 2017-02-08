@@ -219,8 +219,10 @@ def admin_remove():
 @app.route('/api/search')
 def search():
     query=request.args.get("q")
-    stocks= models.Stock.objects.filter(name__icontains=query).only('name','price','trend').limit(10)
-    return Response(stocks.to_json(), mimetype="application/json")
+    if query:
+        stocks= models.Stock.objects.filter(name__icontains=query).only('name','price','trend').limit(10)
+        return Response(stocks.to_json(), mimetype="application/json")
+    return jsonify([])
 
 @app.route('/api/stock')
 def stock():
