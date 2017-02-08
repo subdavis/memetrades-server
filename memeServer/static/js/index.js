@@ -18,17 +18,22 @@ function get_view(){
     return "portfolio"
 }
 
-function get_portolio_amount(name){
-    //TODO
-}
+function get_selected_meme(){}
 
 function board_display(meme){
+    console.log('Displaying ' + meme);
     $("#selected-stock").text(meme);
     $("#selected-stock").attr('meme', meme);
     $.get('/api/stock', {meme:meme}, function(data){
-        $("#selected-price").text("Price: $" + data['price']);
-        $("#selected-trend").empty().text("Trend: ").append(trend_symbol(data['trend']));
-        $("#selected-link").attr("href", "/stock/" + data['_id']['$oid']);
+        if (data['name']){
+            // the meme existed
+            $("#selected-price").text("Price: $" + data['price']);
+            $("#selected-trend").empty().text("Trend: ").append(trend_symbol(data['trend']));
+            $("#selected-link").attr("href", "/stock/" + data['_id']['$oid']);
+        } else {
+            $("#selected-price").text("Price: $1");
+            $("#selected-trend").empty().text("?");
+        }
     });
     graphed = meme;
     selected_meme = meme;
@@ -51,18 +56,6 @@ function tableCreate(el, data, query)
         var th_name = trh.insertCell();
         th_name.appendChild(document.createTextNode('name'));
         trh.setAttribute('class', 'economy-header');
-    }
-    else {
-        //prompt to "add new"
-        var newtext = "Meme not found. ";
-        if (is_authenticated())
-            newtext+="Click to inspect.";
-
-        var trh = tbl.insertRow();
-        var th_new = trh.insertCell();
-        th_new.appendChild(document.createTextNode(newtext));
-        th_new.setAttribute('id', 'create-meme');
-        $("#create-meme").off('click');
     }
 
     for (var i = 0; i < data.length; ++i)
@@ -93,6 +86,21 @@ function tableCreate(el, data, query)
         td_value.appendChild(document.createTextNode(data[i]['name']));
         td_value.setAttribute('class', 'meme-name');
     }
+
+    if (query) {
+        //prompt to "add new"
+        var newtext = "Inspect meme " + query;
+
+        var trh = tbl.insertRow();
+        var th_new = trh.insertCell();
+        trh.setAttribute('meme', query);
+        trh.setAttribute('class', 'economy');
+        th_new.appendChild(document.createTextNode(newtext));
+        th_new.setAttribute('id', 'create-meme');
+        th_new.setAttribute('colspan', 4);
+        $("#create-meme").off('click');
+    }
+
     el.append(tbl);
 
     $('tr.economy').click(function() {
@@ -100,16 +108,10 @@ function tableCreate(el, data, query)
             document.getElementById("meme").value = this.getAttribute('meme');
         board_display(this.getAttribute('meme'));
     });
-    if (is_authenticated()){
-        $("#create-meme").click(function(){
-            $("#create-meme").off('click'); // disable clicking agian
-            board_display(query);
-            // buy();
-        });
-    }
 }
 
 function updateAccount(holdings, money){
+    // console.log("Update account...");
     $("#account-money").text("$"+money);
     $("#account-holdings").text("$"+holdings);
 }
@@ -148,6 +150,7 @@ function update(meme){
 }
 
 function sell() {
+    console.log("Sell");
     var meme = $("#selected-stock").attr('meme');
     $.get(base_url+"/api/sell", {meme: meme}, function(){
         update(meme);
@@ -155,6 +158,7 @@ function sell() {
 }
 
 function buy() {
+    console.log("Buy");
     var meme = $("#selected-stock").attr('meme');
     $.getJSON(base_url+"/api/buy", {meme: meme}, function(data){
         if (data['status'] == 'fail')

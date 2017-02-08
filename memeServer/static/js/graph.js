@@ -1,5 +1,10 @@
 function graph(meme, base_url) {
   $.getJSON(base_url + "/api/history", {meme:meme}, function(input) {
+
+    if (input.length == 0){
+      console.log("Nothing to graph...");
+      return;
+    }
     
     var dataPoints= input.map(function(pt) { 
       return {
@@ -8,13 +13,12 @@ function graph(meme, base_url) {
       };
     });
     
-    if (dataPoints.length > 0){
-      // Create a data point at now.
-      dataPoints.unshift({
-        x:new Date(Date.now()), 
-        y:dataPoints[0]["y"]
-      });
-    }
+    
+    // Create a data point at now.
+    dataPoints.unshift({
+      x:new Date(Date.now()), 
+      y:dataPoints[0]["y"]
+    });
 
     // pick a reasonable interval
     var start_hour = new Date(Math.round(input[0]['time']));

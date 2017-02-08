@@ -35,7 +35,9 @@
                     
                     <!-- Account info -->
                     <div style="margin-bottom: -20px; margin-top: 10px;" id="logo" width="100%">
-                        <img style="display: block; margin:auto;" width=250 height=250 src="{{ url_for('static', filename='img/logo.png') }}">
+                        <a href="/"> 
+                            <img style="display: block; margin:auto;" width=250 height=250 src="{{ url_for('static', filename='img/logo.png') }}">
+                        </a>
                     </div>
                     {% if current_user.is_authenticated %}
                         <h2 id="account-info">Account info:</h2>
@@ -86,14 +88,16 @@
                 <p>We the developers believe that civilization is entering the golden age of meme trading.</p>
                 
                 <h2>How this thing works</h2>
-                <p> You must sign in with facebook to buy.  We won't send you email, notifications, or anything of the sort. Click memes to select them, then buy/sell.  Meme not listed?  Type or paste it into the box and buy one.  Don't let your memes be dreams</p>
+                <p> You must sign in with facebook to buy.  We won't send you email, notifications, or anything of the sort. Click memes to select them, then buy/sell.  Meme not listed?  Type or paste into the search bar, then inspect and buy.  Don't let your memes be dreams</p>
             </div>
             
             <div class="col-sm-8 col-md-9">
                 <div class="row">
                     <div class='col-sm-12'>
                         <center>
-                            <h2 id="selected-stock">{{ stock.name if stock else '' }}</h2>
+                            <h2 meme="{{ stock.name if stock else '' }}" id="selected-stock">
+                                {{ stock.name if stock else '' }}
+                            </h2>
                         </center>
                     </div>
                     <div class="selected col-md-12">
@@ -139,7 +143,7 @@
                                 <td>name</td>
                             </tr>
                             {% for s in stocks %}
-                            <tr class='economy'>
+                            <tr class='economy' meme='{{ s.name }}'>
                                 <td>{{ s.amount if s.amount else '' }}</td>
                                 <td>${{ s.price|int }}</td>
                                 <td>
