@@ -220,7 +220,9 @@ def admin_remove():
 def search():
     query=request.args.get("q")
     if query:
-        stocks= models.Stock.objects.filter(name__icontains=query).only('name','price','trend').limit(10)
+        stocks= models.Stock.objects.filter(
+            name__icontains=query,
+            blacklisted=False).only('name','price','trend').limit(10)
         return Response(stocks.to_json(), mimetype="application/json")
     return jsonify([])
 
