@@ -1,5 +1,6 @@
 var base_url = ""
 var graphed;
+var selected_meme;
 var page;
 var portfolio_list;
 
@@ -23,12 +24,14 @@ function get_portolio_amount(name){
 
 function board_display(meme){
     $("#selected-stock").text(meme);
+    $("#selected-stock").attr('meme', meme);
     $.get('/api/stock', {meme:meme}, function(data){
         $("#selected-price").text("Price: $" + data['price']);
         $("#selected-trend").empty().text("Trend: ").append(trend_symbol(data['trend']));
         $("#selected-link").attr("href", "/stock/" + data['_id']['$oid']);
     });
     graphed = meme;
+    selected_meme = meme;
     graph(meme, base_url);
 }
 
@@ -66,6 +69,7 @@ function tableCreate(el, data, query)
     {
         var tr = tbl.insertRow();
         tr.setAttribute("class", "economy");
+        tr.setAttribute("meme", data[i]['name']);
 
         var td_amount = tr.insertCell();
         if ('amount' in data[i]){
@@ -90,11 +94,11 @@ function tableCreate(el, data, query)
         td_value.setAttribute('class', 'meme-name');
     }
     el.append(tbl);
-    
-    $('td.meme-name').click(function() {
+
+    $('tr.economy').click(function() {
         if (is_authenticated())
-            document.getElementById("meme").value = this.innerText;
-        board_display(this.innerText);
+            document.getElementById("meme").value = this.getAttribute('meme');
+        board_display(this.getAttribute('meme'));
     });
     if (is_authenticated()){
         $("#create-meme").click(function(){
@@ -144,14 +148,14 @@ function update(meme){
 }
 
 function sell() {
-    var meme = $("#selected-stock").text();
+    var meme = $("#selected-stock").attr('meme');
     $.get(base_url+"/api/sell", {meme: meme}, function(){
         update(meme);
     });
 }
 
 function buy() {
-    var meme = $("#selected-stock").text();
+    var meme = $("#selected-stock").attr('meme');
     $.getJSON(base_url+"/api/buy", {meme: meme}, function(data){
         if (data['status'] == 'fail')
             alert('you out of cash');
@@ -160,7 +164,7 @@ function buy() {
 }
 
 function remove(){
-    var meme = $("#selected-stock").text();
+    var meme = $("#selected-stock").attr('meme');
     /* Admin only. Don't bother, the backend will check your permissions */
     $.get(base_url+"/api/admin/stock/delete", {meme: meme}, function(){
         update(meme);
@@ -168,7 +172,7 @@ function remove(){
 }
 
 function search(){
-    var query = document.getElementById("meme").value;
+    var query = $("#meme").val();
     $.getJSON(base_url+"/api/search", {q:query}, function(data){
         var elem = $("#search-results-table");
         elem.empty();
@@ -177,7 +181,7 @@ function search(){
 }
 
 function init(){
-    var active = $("#selected-stock").text();
+    var active = $("#selected-stock").attr('meme');
     if (active != '') // TODO: Slight hack...  Maybe I can do this better.
         board_display(active);
     page = $("#pagenumber").text();
