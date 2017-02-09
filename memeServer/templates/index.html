@@ -1,21 +1,21 @@
  <html>
  <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="The MemeTrades meme exchange is a free market for memers.  We're sorry.">
+    <meta name="description" content="The MemeTrades meme exchange is a free market for memers.">
     <meta name="keywords" content="meme,exchange,trade,nasdanq,stock,memes,copypasta">
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon" />
 
     <!-- FACEBOOK -->
     <meta property="og:title" content="Meme Trades" />
     <meta property="og:site_name" content="memetrades.com"/>
-    <meta property="og:description" content="We strongly regret making this."/>
+    <meta property="og:description" content="We the developers believe that civilization is entering the golden age of meme trading."/>
     
     <!-- TWITTER -->
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="memetrader.com">
     <meta name="twitter:creator" content="@subdavis">
     <meta name="twitter:title" content="MemeTrader" />
-    <meta name="twitter:description" content="We strongly regret making this." />
+    <meta name="twitter:description" content="We the developers believe that civilization is entering the golden age of meme trading." />
     <meta name="twitter:url" content="http://memetrader.com" />
 
     <script async defer src="https://buttons.github.io/buttons.js"></script>
@@ -30,6 +30,8 @@
 <body>
     <div class="container-fluid no-gutters">
         <div class="row">
+
+            <!-- Sidebar -->
             <div class="col-sm-4 col-md-3 fixed">
                 <div id="portfolio">
                     
@@ -70,6 +72,7 @@
                     </div>
                 </div>
                 
+                <!-- Search -->
                 <div class='buysellbox'>
                     <h1>🔍👁 Search: </h1>
                     <input class="buysell" onkeyup='search()' type='text' name='meme' id='meme' placeholder="literally type a meme">
@@ -77,28 +80,31 @@
                     <!-- <button class="buysell" style="margin-top: 10px;" onclick="search()">Search</button> -->
                 </div>
                 
+                <!-- Search Results -->
                 <div id="search-results">
                     <table id='search-results-table'></table>
                 </div>
-                <!-- 
-                <h1><a href="visualizer">Visualizer</a></h1> -->
                 
+                <!-- About section -->
                 <h2>what even is this?</h2>
-                <p> Trading memes, obvs.  You must sign in with facebook to buy.  We won't send you email, notifications, or anything of the sort. Click memes to select them, then buy/sell.  Meme not listed?  Type or paste into the search bar, then inspect and buy.  Don't let your memes be dreams.</p>
+                <p> Trading 📈 💱 memes, obvs.  You must sign in with facebook to buy.  We won't send you 📧 📨 email, 📲 notifications, or anything 🔇 of the sort 📴 . Click 🖱 💻 memes to select them, then 📈 buy or 📉 sell.  Meme not listed ⁉ ? ❓  Type 💻 or paste into the search bar, then inspect and buy.  Don't let your memes be dreams 🎆 🎊 🎉</p>
 
                 <h2>but... why?</h2>
                 <p>We the developers believe that civilization is entering the golden age of meme trading.</p>
                 <h2>who made this trash?</h2>
-                <a href="http://hgreer.com">Brandon</a>
+                <a href="http://hgreer.com">Hastings</a>
                 and
-                <a href="https://subdavis.com">Hastings</a>
+                <a href="https://subdavis.com">Brandon</a>
                 
                 <h2></h2>
                 <p>*updated by server on an interval</p>
             </div>
             
+            <!-- Main Content -->
             <div class="col-sm-8 col-md-9">
                 <div class="row">
+
+                    <!-- Title -->
                     <div class='col-sm-12'>
                         <center>
                             <h2 meme="{{ stock.name if stock else '' }}" id="selected-stock">
@@ -106,6 +112,8 @@
                             </h2>
                         </center>
                     </div>
+                    
+                    <!-- Quick info pane below title -->
                     <div class="selected col-md-12">
                         <span id="selected-price">Price: {{ stock.price if stock else '' }}</span>
                         <span id="selected-trend">Trend:</span>
@@ -122,12 +130,16 @@
                             {% endif %}
                         {% endif %}
                     </div>
+
+                    <!-- Time Chart -->
                     <div class="col-md-12">
                         <div id="graph">
                             <div id="chartContainer" style="height: 300px; width: 100%;">
                             </div>
                         </div>
                     </div>
+
+                    <!-- Table nav -->
                     <div id="{{ view }}" class='col-md-12'>
                         <ul class="nav nav-tabs">
                           
@@ -140,6 +152,8 @@
                         </ul>
                     </div>
                     <br>
+
+                    <!-- Stock Table -->
                     <div id="jsonM">
                         <table>
                             <tr class='economy-header'>
@@ -164,11 +178,15 @@
                             {% endfor %}
                         </table>
                     </div>
+
+                    <!-- Pagination  -->
                     <div class='pagination'>
                         <a href="?page={{ page - 1 if page > 1 else 1 }}" style="float: left;">&nbsp;⇦</a>
                             Page: <span id="pagenumber">{{ page }}</span> 
                         <a href="?page={{ page + 1 }}" style="float: right;">⇨&nbsp;</a>
                     </div>
+
+                    <!-- API Docs -->
                     <div class="row">
                         <div class="col-md-6">
                             <h3>Public API</h3>
@@ -197,14 +215,12 @@
                                 {% endif %}
                         </div>
                     </div>
-                    Credit: <a href="http://subdavis.com">Brandon</a>
-                        <a href="http://hgreer.com">Hastings</a>
-                        <a href="https://github.com/dafondo">Austin</a>
-                        <a href="https://kylefeng28.github.io/">Kyle</a>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Scrolling leaderboards. -->
     <div class="footer">
         <marquee behavior="scroll" direction="left" id='leaderboard'>
         Leaderboard: 
