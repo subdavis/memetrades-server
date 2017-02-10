@@ -91,6 +91,7 @@ class User(Document):
     money=FloatField(required=True)
     stock_value = FloatField(require=True)
     api_key=StringField(required=True)
+    referral_code=StringField()
     admin=BooleanField()
 
     # holdings Example 
@@ -105,6 +106,7 @@ class User(Document):
         self.stock_value = 0
         self.holdings = {}
         self.api_key = utils.get_new_key()
+        self.referral_code = utils.get_new_key()
         self.admin = False
         self.save()
 

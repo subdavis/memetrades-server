@@ -102,13 +102,15 @@ def requires_roles(*roles):
 @app.route('/login')
 def login():
     """ /login is hit before and after the user gets to facebook. """
+    referral = request.args.get('r')
+    state = referral if referral else "NONE"
     callback_base = settings.SERVER_NAME
     if app.config['DEBUG']:
         # bypass auth, just login the local user and go to index
         login_user(get_local_user())
         return redirect(url_for('index'))
     else:
-        return facebook.authorize(callback=callback_base + url_for("oauth_authorized"))
+        return facebook.authorize(callback=callback_base + url_for("oauth_authorized") + "?state=" + state)
 
 @app.route('/oauth-authorized')
 @facebook.authorized_handler
@@ -118,6 +120,9 @@ def oauth_authorized(resp):
     if resp is None:
         flash(u'You denied the request to sign in.')
         return redirect(next_url)
+    state = request.args.get('state')
+    if state:
+        print(state)
     user_data = fbshim.get_user(resp['access_token'])
     user = load_user(user_data['user_id'])
     if not user:
