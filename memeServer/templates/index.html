@@ -118,7 +118,7 @@
                         <span id="selected-price">Price: {{ stock.price if stock else '' }}</span>
                         <span id="selected-trend">Trend:</span>
                         <span>Link:
-                            <a id="selected-link" href="{{ base_url+'/stock/'+stock.get_id() if stock else '#' }}">
+                            <a id="selected-link" href="{{ base_url+'/stock/'+stock.id if view == 'recent' else (base_url+'/stock/'+stock.get_id() if stock else '#') }}">
                                 <img src="{{ url_for('static', filename='img/link.png') }}" width=32 height=32>
                             </a>
                         </span>
@@ -143,11 +143,17 @@
                     <div id="{{ view }}" class='col-md-12'>
                         <ul class="nav nav-tabs">
                           
-                          <li class='{{ "active" if view=="market" else "" }}'><a href="/">All Stocks</a></li>
+                          <li class='{{ "active" if view=="market" else "" }}'>
+                            <a href="/">All Stocks</a>
+                          </li>
                           
                           {% if current_user.is_authenticated %}
                             <li class='{{ "active" if view=="portfolio" else "" }}'><a href="/portfolio">My Stocks</a></li>
                           {% endif %}
+
+                          <li class='{{ "active" if view=="recent" else "" }}'>
+                            <a href="/recent">All Recent Trades</a>
+                          </li>
                         
                         </ul>
                     </div>
@@ -179,12 +185,14 @@
                         </table>
                     </div>
 
+                    {% if view=='market' %}
                     <!-- Pagination  -->
                     <div class='pagination'>
                         <a href="?page={{ page - 1 if page > 1 else 1 }}" style="float: left;">&nbsp;⇦</a>
                             Page: <span id="pagenumber">{{ page }}</span> 
                         <a href="?page={{ page + 1 }}" style="float: right;">⇨&nbsp;</a>
                     </div>
+                    {% endif %}
 
                     <!-- API Docs -->
                     <div class="row">

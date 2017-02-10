@@ -28,7 +28,8 @@ function graph(meme, base_url) {
     var interval = Math.round(end_hour - start_hour / 5);
     interval = interval < 2 ? 2 : interval;
     
-    var chart = new CanvasJS.Chart("chartContainer",
+    var chart = new CanvasJS.Chart(
+      "chartContainer",
       {
         axisX:{
           title: "time",
@@ -36,7 +37,7 @@ function graph(meme, base_url) {
           interval:interval, 
           intervalType: "hour",        
           valueFormatString: "MMM DD hh TT", 
-          labelAngle: -20
+          labelAngle: -10
         },
         axisY:{
           title: "price"
@@ -44,6 +45,7 @@ function graph(meme, base_url) {
         data: [
           {        
             type: "line",
+            lineThickness: 3,
             dataPoints: dataPoints
           }
         ]

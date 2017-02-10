@@ -15,6 +15,9 @@ function get_view(){
     var market = $("#market");
     if (market.length > 0)
         return "market"
+    var recent = $("#recent");
+    if (recent.length > 0)
+        return "recent"
     return "portfolio"
 }
 
@@ -71,7 +74,7 @@ function tableCreate(el, data, query)
             td_amount.appendChild(document.createTextNode(data[i]['amount']));
         } else {
             // TODO get_portfolio_amount()
-            td_amount.appendChild(document.createTextNode('.'));
+            td_amount.appendChild(document.createTextNode(''));
         }
 
         var td_price = tr.insertCell();
@@ -139,12 +142,21 @@ function updatePortfolio(meme) {
     }
 }
 
+function updateRecent(){
+    $.getJSON(base_url+'/api/recent', function(data) {
+        tableCreate($("#jsonM"), data);
+    });
+}
+
 function update(meme){
     // Decide what to do depending on what view we are in....
     if (is_authenticated())
         updatePortfolio();
-    if (get_view() == "market")
+    var view = get_view()
+    if (view == "market")
         updateMarket();
+    if (view == "recent")
+        updateRecent();
     if (meme)
         board_display(meme);
 }

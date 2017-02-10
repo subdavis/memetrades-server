@@ -190,6 +190,18 @@ class User(Document):
     def is_admin(self):
         return self.admin
 
+def get_recents():
+    result = StockHistoryEntry.objects.order_by('-time').limit(50)
+    ret = []
+    for r in result:
+        s = Stock.objects.get(id=r['stock']['id'])
+        ret.append({
+            "name":s['name'],
+            "price": r['price'],
+            "trend":s['trend'],
+            "id": str(r['stock']['id'])
+        })
+    return ret
 
 def get_leaders():
     result = User._get_collection().aggregate([

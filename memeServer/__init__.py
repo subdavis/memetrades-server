@@ -135,6 +135,22 @@ def index_portfolio():
         stock=stock,
         page=1)
 
+@app.route('/recent')
+@login_required
+def index_recent():
+    leaders = models.get_leaders()
+    stocks = models.get_recents()
+    stock = None;
+    if len(stocks) >= 1:
+        stock = stocks[0]
+    return render_template('index.html',
+        view="recent",
+        base_url=settings.SERVER_NAME,
+        leaders=leaders,
+        stocks=stocks,
+        stock=stock,
+        page=1)
+
 @app.route('/stock/<stockid>')
 def index_stock(stockid):
     try:
@@ -263,8 +279,8 @@ def history():
 @app.route('/api/recent')
 def recent():   
     # Get the 100 most recent transactions
-    recents = models.StockHistoryEntry.objects.order_by('-time').limit(100)
-    return Response(recents.to_json(), mimetype='application/json')
+    # return Response(models.get_recents().to_json(), mimetype='application/json')
+    return jsonify(models.get_recents())
 
 #
 # Facebook Login Handlers
