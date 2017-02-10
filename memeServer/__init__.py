@@ -120,15 +120,19 @@ def oauth_authorized(resp):
     if resp is None:
         flash(u'You denied the request to sign in.')
         return redirect(next_url)
-    state = request.args.get('state')
-    if state:
-        print(state)
     user_data = fbshim.get_user(resp['access_token'])
     user = load_user(user_data['user_id'])
-    if not user:
+    if not user:  
         user = models.User()
         user.init(user_data['name'], user_data['user_id'])
+        # Check for referral..
+        state = request.args.get('state')
+        if state:
+            print("Referral for " + user.name)
+            user.money += settings.MONEY_PER_REFERRAL
+            user.try_referral(state)
         user.save()
+    
     login_user(user)
     # logger.info("Welcome, " + user.name)
     redirect_to_client = redirect(url_for('index'), code=302)

@@ -14,7 +14,8 @@ def memes():
         "money": current_user.money,
         "stocks": current_user.get_holdings(),
         "api_key": current_user.api_key,
-        "stock_value": current_user.stock_value
+        "stock_value": current_user.stock_value,
+        "referral_code": current_user.referral_code
     })
 
 @app.route('/api/buy')

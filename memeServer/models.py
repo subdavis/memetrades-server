@@ -176,6 +176,14 @@ class User(Document):
             return 'admin'
         return 'user'
 
+    def try_referral(self, code):
+        referrer = User.objects.filter(referral_code=state).first()
+        if referrer:
+            referrer.money += settings.MONEY_PER_REFERRAL
+            referrer.save()
+            return True
+        return False
+
     @property
     def is_authenticated(self):
         return True
@@ -249,4 +257,9 @@ def sanity_checks():
     #     for h in s.history:
     #         newh = StockHistoryEntry(stock=s, time=h.time, price=h.price)
     #         newh.save()
+    
+    users = User.objects(referral_code__exists=False)
+    for user in users:
+        user.referral_code = utils.get_new_key()
+        user.save()
     pass

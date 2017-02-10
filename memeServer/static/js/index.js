@@ -3,6 +3,7 @@ var graphed;
 var selected_meme;
 var page;
 var portfolio_list;
+var me;
 
 function is_authenticated(){
     var portfolio = $("#account-info");
@@ -119,6 +120,12 @@ function updateAccount(holdings, money){
     $("#account-holdings").text("$"+holdings);
 }
 
+function referral(){
+    if (is_authenticated() && me){
+        prompt("Share your code with friends: you'll both get an extra 300 memebucks.", "http://memetrades.com" + "/login?r=" + me['referral_code']);
+    }
+}
+
 function updateMarket(){
     $.getJSON(base_url+'/api/stocks',{page:page}, function(data) {
         if (graphed === undefined)
@@ -133,6 +140,7 @@ function updatePortfolio(meme) {
     // Called, among other things, when buy and sell are clicked.
     if (is_authenticated()){
         $.getJSON(base_url+'/api/me', function(data) {
+            me = data;
             portfolio_list = data['stocks'];
             updateAccount(data['stock_value'], data['money']);
             //update table on portfolio page.

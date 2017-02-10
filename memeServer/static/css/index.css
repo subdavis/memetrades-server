@@ -73,8 +73,9 @@ body > .container-fluid {
     width: 100%;
     margin: 10px 0px;
 }
-#logout {
-    width: 100%;
+.refbutton {
+    width: 48%;
+    margin: .5%;
 }
 #selected-stock {
     overflow-x: hidden;

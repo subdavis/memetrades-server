@@ -53,7 +53,8 @@
                                 <td id="account-holdings">${{ current_user.stock_value|int }}</td>
                             </tr>
                         </table>
-                        <button onclick="location.href = '/logout';" id="logout">Log Out</button>
+                        <button class="refbutton" onclick="referral();">Get Referral Code</button>
+                        <button class="refbutton" onclick="location.href = '/logout';">Log Out</button>
                     {% else %}
                         <h1> Sign in to trade: </h1>
                         <div id="fblogin">
