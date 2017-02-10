@@ -21,6 +21,10 @@ def index():
         page=page,
         stock=stocks.first())
 
+@app.route('/apidocs')
+def apidocs():
+    return render_template('api.html')
+
 @app.route('/portfolio')
 @login_required
 def index_portfolio():
