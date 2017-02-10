@@ -136,7 +136,6 @@ def index_portfolio():
         page=1)
 
 @app.route('/recent')
-@login_required
 def index_recent():
     leaders = models.get_leaders()
     stocks = models.get_recents()
