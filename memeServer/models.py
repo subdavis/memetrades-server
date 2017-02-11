@@ -177,7 +177,7 @@ class User(Document):
         return 'user'
 
     def try_referral(self, code):
-        referrer = User.objects.filter(referral_code=state).first()
+        referrer = User.objects.filter(referral_code=code).first()
         if referrer:
             referrer.money += settings.MONEY_PER_REFERRAL
             referrer.save()
