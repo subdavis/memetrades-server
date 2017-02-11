@@ -14,6 +14,8 @@ INITIAL_MONEY=1000.0
 API_KEY_LENGTH=32
 # Number of memes per page for pagination
 STOCKS_PER_PAGE=50
+# Number of memebucks a referral gets you.
+MONEY_PER_REFERRAL=300
 
 # Get this from developers.facebook.com 
 FACEBOOK = {
