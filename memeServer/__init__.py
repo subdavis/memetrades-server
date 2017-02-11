@@ -13,6 +13,8 @@ import time
 from . import models
 from . import facebookShim
 
+from mongoengine import DoesNotExist, ValidationError
+
 #
 # Setup
 #
