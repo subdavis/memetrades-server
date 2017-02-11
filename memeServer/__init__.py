@@ -120,7 +120,6 @@ def oauth_authorized(resp):
     """Called after the oauth flow is done."""
     next_url = url_for('index')
     if resp is None:
-        flash(u'You denied the request to sign in.')
         return redirect(next_url)
     user_data = fbshim.get_user(resp['access_token'])
     user = load_user(user_data['user_id'])
