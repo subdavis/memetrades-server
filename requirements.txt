@@ -4,7 +4,6 @@ Flask==0.12
 Flask-Cors==3.0.2
 Flask-Login==0.4.0
 Flask-OAuth==0.12
-httplib2==0.10.2
 itsdangerous==0.24
 Jinja2==2.9.5
 MarkupSafe==0.23
