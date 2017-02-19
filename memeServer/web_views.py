@@ -60,7 +60,9 @@ def index_recent():
 def index_stock(stockid):
     try:
         page = int(request.args.get('page')) if request.args.get('page') else 1
-        stock = models.Stock.objects.filter(id=stockid).first()
+        stock = models.Stock.objects.filter(id=stockid, blacklisted=False).first()
+        if not stock:
+            return redirect(url_for('index'))
         leaders = models.get_leaders()
         return render_template('index.html',
             view="market",
