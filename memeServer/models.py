@@ -9,7 +9,6 @@ from . import settings
 connect(settings.DATABASE["name"])
 
 
-
 class StockHistory(EmbeddedDocument):
     time=FloatField(required=True)
     price=FloatField(required=True)
@@ -17,7 +16,6 @@ class StockHistory(EmbeddedDocument):
     def init(self, price):
         self.time = time.time()
         self.price = price
-
 
 
 class Stock(Document):
