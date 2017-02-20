@@ -172,7 +172,7 @@ function update(meme){
 function sell() {
     console.log("Sell");
     var meme = $("#selected-stock").attr('meme');
-    $.get(base_url+"/api/sell", {meme: meme}, function(){
+    $.get(base_url+"/api/sell", {meme: meme}, function(data){
         if (data['status'] == 'fail')
             alert('Error.  Meme might be banned from club penguin, or not exist.');
         update(meme);
