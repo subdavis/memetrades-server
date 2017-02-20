@@ -256,8 +256,8 @@ def sanity_checks():
     #         newh = StockHistoryEntry(stock=s, time=h.time, price=h.price)
     #         newh.save()
     
-    users = User.objects(referral_code__exists=False)
-    for user in users:
-        user.referral_code = utils.get_new_key()
-        user.save()
+    # users = User.objects(referral_code__exists=False)
+    # for user in users:
+    #     user.referral_code = utils.get_new_key()
+    #     user.save()
     pass
