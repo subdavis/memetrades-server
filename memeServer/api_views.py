@@ -103,7 +103,6 @@ def stocks():
 
 @app.route('/api/history')
 def history():
-    print(request.url)
     meme = request.args.get("meme")
     stock = models.Stock.objects.filter(name=meme).first()
     if stock:
