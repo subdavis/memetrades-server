@@ -1,0 +1,3 @@
+disclaimer:
+
+The developers of memetrades.com are not responsible for managing, reviewing, or policing the content of this site.  Any content found on memetrades.com is not associated with those who maintain the codebase/servers/databases/etc.  We the developers also reserve the right to terminate any user account, remove any content, and do whatever else we want with your data at any time for any reason.  Data recorded from facebook is limited exclusively to your name and profile id string.
