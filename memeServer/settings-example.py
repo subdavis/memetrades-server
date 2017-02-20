@@ -16,6 +16,8 @@ API_KEY_LENGTH=32
 STOCKS_PER_PAGE=50
 # Number of memebucks a referral gets you.
 MONEY_PER_REFERRAL=300
+# Number of requests per day to allow for api
+RATE_LIMIT=1000
 
 # Get this from developers.facebook.com 
 FACEBOOK = {

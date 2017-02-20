@@ -23,7 +23,8 @@ def index():
 
 @app.route('/apidocs')
 def apidocs():
-    return render_template('api.html')
+    return render_template('api.html',
+        rate_limit=settings.RATE_LIMIT)
 
 @app.route('/portfolio')
 @login_required

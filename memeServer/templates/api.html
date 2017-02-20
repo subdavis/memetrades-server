@@ -38,6 +38,9 @@
                     {% else %}
                         <a href="/login">Sign in with Facebook</a> to get your key
                     {% endif %}
+
+                    <h3>Rate Limiting</h3>
+                    <p>All queries are rate-limited at {{ rate_limit }} per day</p>
             </div>
         </div>
     </div>
