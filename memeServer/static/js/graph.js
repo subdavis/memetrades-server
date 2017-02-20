@@ -22,9 +22,9 @@ function graph(meme, base_url) {
 
     // pick a reasonable interval
     var start_hour = new Date(Math.round(input[0]['time']));
-    start_hour = start_hour.getHours();
+    start_hour = start_hour.getTime() / (1000 * 60);
     var end_hour = new Date(Date.now());
-    end_hour = end_hour.getHours();
+    end_hour = end_hour.getTime() / (1000 * 60);
     var interval = Math.round(end_hour - start_hour / 5);
     interval = interval < 2 ? 2 : interval;
     
