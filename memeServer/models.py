@@ -251,7 +251,6 @@ def atomic_lock():
         pass
     global_lock.locked = True
     global_lock.save()
-    print("Lock Aquired")
     return
 
 def atomic_unlock():
@@ -260,7 +259,6 @@ def atomic_unlock():
         raise Exception("Unlock attempted while db was not locked.")
     global_lock.locked = False
     global_lock.save()
-    print("Lock Released")
     return 
 
 
