@@ -174,7 +174,7 @@ function sell() {
     var meme = $("#selected-stock").attr('meme');
     $.get(base_url+"/api/sell", {meme: meme}, function(){
         if (data['status'] == 'fail')
-            alert('Error.  Meme might be banned, or not exist.');
+            alert('Error.  Meme might be banned from club penguin, or not exist.');
         update(meme);
     });
 }
@@ -184,7 +184,7 @@ function buy() {
     var meme = $("#selected-stock").attr('meme');
     $.getJSON(base_url+"/api/buy", {meme: meme}, function(data){
         if (data['status'] == 'fail')
-            alert('Error.  You might be out of cash.  Meme might be banned, or not exist.');
+            alert('Error.  You might be out of cash.  Meme might be banned from club penguin, or not exist.');
         update(meme);
     });
 }
