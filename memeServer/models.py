@@ -23,6 +23,7 @@ class Lock(Document):
             l.save()
             return l
 
+# DEPRECATED
 class StockHistory(EmbeddedDocument):
     time=FloatField(required=True)
     price=FloatField(required=True)
@@ -39,13 +40,14 @@ class Stock(Document):
     blacklisted=BooleanField()
     history=EmbeddedDocumentListField(StockHistory) 
 
-    def buy_one(self):
+    def buy_one(self, user):
         if self.blacklisted:
             return False
         self.price += 1
         hist = StockHistoryEntry(
             stock=self, 
-            time=time.time(), 
+            time=time.time(),
+            user=user, 
             price=self.price)
         hist.save()
         self.trend = 1.0
@@ -53,13 +55,14 @@ class Stock(Document):
         self.save()
         return True
 
-    def sell_one(self):
+    def sell_one(self, user):
         if self.blacklisted:
             return False
         self.price -= 1
         hist = StockHistoryEntry(
             stock=self, 
             time=time.time(), 
+            user=user,
             price=self.price)
         hist.save()
         self.trend = -1.0
@@ -88,12 +91,6 @@ class Stock(Document):
         """
         self.blacklisted = True
         self.save()
-
-
-class StockHistoryEntry(Document):
-    stock=ReferenceField(Stock, required=True)
-    time=FloatField(required=True)
-    price=FloatField(required=True)
 
 
 class User(Document):
@@ -137,7 +134,7 @@ class User(Document):
                 self.holdings[str(stock.id)] += 1
             else:
                 self.holdings[str(stock.id)] = 1
-            if stock.buy_one():
+            if stock.buy_one(self):
                 self.money -= stock.price
                 self.save()
                 return True
@@ -153,7 +150,7 @@ class User(Document):
             if self.holdings[str(stock.id)] >= 1:
                 self.money += stock.price
                 self.holdings[str(stock.id)] -= 1
-                if stock.sell_one():
+                if stock.sell_one(self):
                     self.save()
                     return True
         return False
@@ -211,6 +208,13 @@ class User(Document):
     @property
     def is_admin(self):
         return self.admin
+
+class StockHistoryEntry(Document):
+    stock=ReferenceField(Stock, required=True)
+    user=ReferenceField(User)
+    time=FloatField(required=True)
+    price=FloatField(required=True)
+
 
 def get_recents():
     result = StockHistoryEntry.objects.order_by('-time').limit(50)
