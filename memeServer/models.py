@@ -1,6 +1,7 @@
 from mongoengine import *
 import time
 import datetime
+from functools import wraps
 
 from . import utils
 from . import settings
@@ -8,6 +9,19 @@ from . import settings
 
 connect(settings.DATABASE["name"])
 
+class Lock(Document):
+    locked = BooleanField()
+
+    @staticmethod
+    def get():
+        l = Lock.objects.first()
+        if l:
+            return l
+        else:
+            l = Lock()
+            l.locked = False
+            l.save()
+            return l
 
 class StockHistory(EmbeddedDocument):
     time=FloatField(required=True)
@@ -228,6 +242,26 @@ def get_leaders():
         item['name'] = ''.join(w[0] for w in item['name'].split())
         ret.append(item)
     return ret
+
+
+# Wrapper for checking user permissions
+def atomic_lock():
+    global_lock = Lock.get()
+    while global_lock.locked:
+        pass
+    global_lock.locked = True
+    global_lock.save()
+    print("Lock Aquired")
+    return
+
+def atomic_unlock():
+    global_lock = Lock.get()
+    if global_lock.locked == False:
+        raise Exception("Unlock attempted while db was not locked.")
+    global_lock.locked = False
+    global_lock.save()
+    print("Lock Released")
+    return 
 
 
 def sanity_checks():
