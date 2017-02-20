@@ -20,24 +20,16 @@ function graph(meme, base_url) {
       y:dataPoints[0]["y"]
     });
 
-    // pick a reasonable interval
-    var start_hour = new Date(Math.round(input[0]['time']));
-    start_hour = start_hour.getTime() / (1000 * 60);
-    var end_hour = new Date(Date.now());
-    end_hour = end_hour.getTime() / (1000 * 60);
-    var interval = Math.round(end_hour - start_hour / 5);
-    interval = interval < 2 ? 2 : interval;
-    
     var chart = new CanvasJS.Chart(
       "chartContainer",
       {
         axisX:{
           title: "time",
           gridThickness: 2,
-          interval:interval, 
+          // interval:interval, 
           intervalType: "hour",        
           valueFormatString: "MMM DD hh TT", 
-          labelAngle: -10
+          labelAngle: -20
         },
         axisY:{
           title: "price"
