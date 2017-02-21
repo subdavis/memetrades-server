@@ -15,17 +15,19 @@
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:site" content="memetrader.com">
     <meta name="twitter:creator" content="@subdavis">
-    <meta name="twitter:title" content="MemeTrader" />
+    <meta name="twitter:title" content="MemeTrades.com" />
     <meta name="twitter:description" content="We the developers believe that civilization is entering the golden age of meme trading." />
     <meta name="twitter:url" content="http://memetrader.com" />
 
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/canvasjs/1.7.0/canvasjs.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="{{ url_for('static', filename='js/graph.js') }}"></script>
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>
 
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
 </head>
 <body>
@@ -65,7 +67,7 @@
 
                     <!-- Social -->
                     <div id="Social">
-                        <a href="https://twitter.com/share" class="twitter-share-button" data-show-count="false">meme trading was literally invented: http://memetrades.com</a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+                        <a href="https://twitter.com/share" class="twitter-share-button" data-show-count="false"></a><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
                         &nbsp;
                         <iframe src="https://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fmemetrades.com&width=106&layout=button_count&action=like&size=small&show_faces=true&share=true&height=46&appId=245240242552898" width="120" height="20" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true"></iframe>
                         &nbsp;
@@ -89,7 +91,10 @@
                 
                 <!-- About section -->
                 <h2>what even is this?</h2>
-                <p> Trading 📈 💱 memes, obvs.  You must sign in with facebook to buy.  We won't send you 📧 📨 email, 📲 notifications, or anything 🔇 of the sort 📴 . Click 🖱 💻 memes to select them, then 📈 buy or 📉 sell.  Meme not listed ⁉ ? ❓  Type 💻 or paste into the search bar, then inspect and buy.  Don't let your memes be dreams 🎆 🎊 🎉</p>
+                <p> Trading 📈 💱 memes, obvs.  You must sign in with facebook to buy.  We won't send you 📧 📨 email, 📲 notifications, or anything 🔇 of the sort 📴 . Click 🖱 💻 memes to select them, then 📈 buy or 📉 sell.  Meme not listed ⁉ ? ❓  Type 💻 or paste into the search bar, then inspect and buy.  Don't let your memes be dreams 🎆 🎊 🎉.
+                <br>
+                Holdings updated every 2 min.
+                </p>
 
                 <h2>but... why?</h2>
                 <p>We the developers believe that civilization is entering the golden age of meme trading. 

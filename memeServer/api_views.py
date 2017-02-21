@@ -23,30 +23,25 @@ def memes():
 @app.route('/api/buy')
 @login_required
 def buy():
-    models.atomic_lock()
     meme = request.args.get("meme").strip()
     stock = models.Stock.objects.filter(name=meme).first()
     if not stock:
         stock = models.Stock(name=meme, price=0)
         stock.save()
 
-    if current_user.buy_one(stock):
-        models.atomic_unlock()
+    if current_user.queue_buy(stock):
         return utils.success()
-    models.atomic_unlock()
     return utils.fail()
 
 @app.route('/api/sell')
 @login_required
 def sell():
-    models.atomic_lock()
     meme = request.args.get("meme")
     stock = models.Stock.objects.filter(name=meme).first()
+    
     if stock:
-        if current_user.sell_one(stock):
-            models.atomic_unlock()
+        if current_user.queue_sell(stock):
             return utils.success()
-    models.atomic_unlock()
     return utils.fail()
 
 @app.route('/logout')

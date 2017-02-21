@@ -4,6 +4,7 @@ var selected_meme;
 var page;
 var portfolio_list;
 var me;
+var last_load;
 
 function is_authenticated(){
     var portfolio = $("#account-info");
@@ -174,7 +175,9 @@ function sell() {
     var meme = $("#selected-stock").attr('meme');
     $.get(base_url+"/api/sell", {meme: meme}, function(data){
         if (data['status'] == 'fail')
-            alert('Error.  Meme might be banned from club penguin, or not exist.');
+            toastr.error('Error.  Meme might be banned from club penguin, or you don\'t own any');
+        else
+            toastr.success('Queued one SELL.')
         update(meme);
     });
 }
@@ -184,7 +187,10 @@ function buy() {
     var meme = $("#selected-stock").attr('meme');
     $.getJSON(base_url+"/api/buy", {meme: meme}, function(data){
         if (data['status'] == 'fail')
-            alert('Error.  You might be out of cash.  Meme might be banned from club penguin, or not exist.');
+            // alert('Error.  ');
+            toastr.error('You might be out of memebucks. Meme might be banned. Who are we to say?');
+        else
+            toastr.success('Queued one BUY.');
         update(meme);
     });
 }
