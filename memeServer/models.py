@@ -6,11 +6,11 @@ from functools import wraps
 from . import utils
 from . import settings
 
-
 connect(settings.DATABASE["name"])
 
 class Lock(Document):
     locked = BooleanField()
+    user = StringField()
 
     @staticmethod
     def get():
@@ -31,7 +31,6 @@ class StockHistory(EmbeddedDocument):
     def init(self, price):
         self.time = time.time()
         self.price = price
-
 
 class Stock(Document):
     name=StringField(required=True)
@@ -155,6 +154,23 @@ class User(Document):
                     return True
         return False
 
+    #
+    # Create a new transaction...
+    #
+    def _queue_transaction(self, stock, action):
+        tx = TransactionBacklog().init(stock=stock,
+                                        user=self,
+                                        action=action)
+        return True
+    
+    def queue_buy(self, stock):
+        if (self.money > stock.price and not stock.blacklisted):
+            return self._queue_transaction(stock, "buy")
+
+    def queue_sell(self, stock):
+        if self.holdings[str(stock.id)] >= 1:
+            return self._queue_transaction(stock, "sell")
+
     def get_holdings(self):
         """
         Process this server-side so the client doesn't have to make n requests to resolve each ID
@@ -216,6 +232,34 @@ class StockHistoryEntry(Document):
     price=FloatField(required=True)
 
 
+class TransactionBacklog(Document):
+    stock=ReferenceField(Stock, required=True)
+    user=ReferenceField(User, required=True)
+    action=StringField(required=True)
+    time=FloatField(required=True)
+    price=FloatField(required=True)
+
+    def init(self, stock=stock, user=user, action="NOOP"):
+        self.stock = stock
+        self.user = user
+        self.action = action
+        self.time = time.time()
+        self.price = stock.price
+        self.save()
+        return self
+
+    def process(self):
+        if self.action == 'buy':
+            self.user.buy_one(self.stock)
+        elif self.action == 'sell':
+            self.user.sell_one(self.stock)
+        
+        print("[{action}] {stock_name} - {user}".format(
+            action=self.action,
+            stock_name=self.stock.name[:50],
+            user=self.user.name))
+
+
 def get_recents():
     result = StockHistoryEntry.objects.order_by('-time').limit(50)
     ret = []
@@ -246,24 +290,6 @@ def get_leaders():
         item['name'] = ''.join(w[0] for w in item['name'].split())
         ret.append(item)
     return ret
-
-
-# Wrapper for checking user permissions
-def atomic_lock():
-    global_lock = Lock.get()
-    while global_lock.locked:
-        pass
-    global_lock.locked = True
-    global_lock.save()
-    return
-
-def atomic_unlock():
-    global_lock = Lock.get()
-    if global_lock.locked == False:
-        raise Exception("Unlock attempted while db was not locked.")
-    global_lock.locked = False
-    global_lock.save()
-    return 
 
 
 def sanity_checks():
