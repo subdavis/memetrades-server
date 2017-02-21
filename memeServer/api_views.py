@@ -27,11 +27,8 @@ def buy():
         stock = models.Stock(name=meme, price=0)
         stock.save()
 
-    # models.atomic_lock(current_user)
     if current_user.queue_buy(stock):
-        # models.atomic_unlock()
         return utils.success()
-    # models.atomic_unlock()
     return utils.fail()
 
 @app.route('/api/sell')
@@ -40,12 +37,9 @@ def sell():
     meme = request.args.get("meme")
     stock = models.Stock.objects.filter(name=meme).first()
     
-    # models.atomic_lock(current_user)
     if stock:
         if current_user.queue_sell(stock):
-            # models.atomic_unlock()
             return utils.success()
-    # models.atomic_unlock()
     return utils.fail()
 
 @app.route('/logout')
