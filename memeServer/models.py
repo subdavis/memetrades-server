@@ -254,10 +254,11 @@ class TransactionBacklog(Document):
         elif self.action == 'sell':
             self.user.sell_one(self.stock)
         
-        print("[{action}] {stock_name} - {user}".format(
+        print("[{time}][{action}] {stock_name} - {user}".format(
+            time=round(self.time),
             action=self.action,
-            stock_name=self.stock.name[:50],
-            user=self.user.name))
+            stock_name=self.stock.name[:50].encode('ascii', 'ignore'),
+            user=self.user.name.encode('ascii', 'ignore')))
 
 
 def get_recents():
