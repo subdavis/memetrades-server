@@ -6,7 +6,7 @@ After=network.target
 User=bdavis
 Group=www-data
 WorkingDirectory=/home/bdavis/server
-ExecStart=/home/bdavis/server/venv/bin/gunicorn --workers 3 --bind unix:/home/bdavis/server/meme.sock wsgi:application
+ExecStart=/home/bdavis/server/venv/bin/gunicorn --workers 5 --bind unix:/home/bdavis/server/meme.sock wsgi:application
 
 [Install]
 WantedBy=multi-user.target
