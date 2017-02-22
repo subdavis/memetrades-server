@@ -69,7 +69,6 @@ def load_user_from_request(request):
     # first, try to login using the api_key url arg
     api_key = request.args.get('api_key')
     if api_key:
-        return None
         user = models.User.objects(api_key=api_key).first()
         if user:
             return user
