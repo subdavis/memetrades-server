@@ -8,36 +8,26 @@ from . import settings
 
 connect(settings.DATABASE["name"])
 
-class Lock(Document):
-    locked = BooleanField()
-    user = StringField()
+# 
+# Exception Classes
+# 
+class BlacklistedException(Exception):
+    pass
+class NoMoneyException(Exception):
+    pass
+class ThisMemeNotInPortfolio(Exception):
+    pass
+class GenericFailException(Exception):
+    pass
 
-    @staticmethod
-    def get():
-        l = Lock.objects.first()
-        if l:
-            return l
-        else:
-            l = Lock()
-            l.locked = False
-            l.save()
-            return l
-
-# DEPRECATED
-class StockHistory(EmbeddedDocument):
-    time=FloatField(required=True)
-    price=FloatField(required=True)
-
-    def init(self, price):
-        self.time = time.time()
-        self.price = price
-
+# 
+# Model Classes
+#
 class Stock(Document):
     name=StringField(required=True)
     price=FloatField(required=True)
     trend=FloatField()
     blacklisted=BooleanField()
-    history=EmbeddedDocumentListField(StockHistory) 
 
     def buy_one(self, user):
         if self.blacklisted:
@@ -128,16 +118,19 @@ class User(Document):
         Step 2: modify the market price
         Step 3: modify the user account totals
         """
-        if (self.money > stock.price and not stock.blacklisted):
-            if str(stock.id) in self.holdings.keys():
-                self.holdings[str(stock.id)] += 1
-            else:
-                self.holdings[str(stock.id)] = 1
-            if stock.buy_one(self):
-                self.money -= stock.price
-                self.save()
-                return True
-        return False
+        if self.money > stock.price:
+            if not stock.blacklisted:
+                if str(stock.id) in self.holdings.keys():
+                    self.holdings[str(stock.id)] += 1
+                else:
+                    self.holdings[str(stock.id)] = 1
+                if stock.buy_one(self):
+                    self.money -= stock.price
+                    self.save()
+                    return True
+                raise GenericFailException("Something else bad happened in user.buy_one")
+            raise BlacklistedException("This stock is blacklisted")
+        raise NoMoneyException("You are out of cash...")
 
     def sell_one(self, stock):
         """
@@ -145,31 +138,39 @@ class User(Document):
         Step 2: modify the suer account totals
         Step 3: modify the market price
         """
-        if str(stock.id) in self.holdings.keys() and not stock.blacklisted:
-            if self.holdings[str(stock.id)] >= 1:
-                self.money += stock.price
-                self.holdings[str(stock.id)] -= 1
-                if stock.sell_one(self):
-                    self.save()
-                    return True
-        return False
+        if str(stock.id) in self.holdings.keys():
+            if not stock.blacklisted:
+                if self.holdings[str(stock.id)] >= 1:
+                    self.money += stock.price
+                    self.holdings[str(stock.id)] -= 1
+                    if stock.sell_one(self):
+                        self.save()
+                        return True
+                    raise GenericFailException("Something else bad happened in user.sell_one")
+                raise ThisMemeNotInPortfolio("You don't have any more of these...")
+            raise BlacklistedException("This stock is banned from club penguin.")
+        raise ThisMemeNotInPortfolio("You never owned one of these...")
 
     #
     # Create a new transaction...
     #
     def _queue_transaction(self, stock, action):
-        tx = TransactionBacklog().init(stock=stock,
-                                        user=self,
-                                        action=action)
-        return True
+        if not stock.blacklisted:
+            tx = TransactionBacklog().init(stock=stock,
+                                            user=self,
+                                            action=action)
+            return True
+        raise BlacklistedException("This stock is banned from club penguin.")
     
     def queue_buy(self, stock):
-        if (self.money > stock.price and not stock.blacklisted):
+        if self.money > stock.price:
             return self._queue_transaction(stock, "buy")
+        raise NoMoneyException("You don't have enough money")
 
     def queue_sell(self, stock):
         if self.holdings[str(stock.id)] >= 1:
             return self._queue_transaction(stock, "sell")
+        raise ThisMemeNotInPortfolio("You don't have any of this stock...")
 
     def get_holdings(self):
         """
@@ -295,7 +296,7 @@ def get_leaders():
 
 def sanity_checks():
     """
-    Function for enforcing new database rules on startup
+    Function for enforcing new database rules on startup...
     """
 
     # Add Blacklisting
@@ -323,4 +324,5 @@ def sanity_checks():
     # for user in users:
     #     user.referral_code = utils.get_new_key()
     #     user.save()
+    
     pass

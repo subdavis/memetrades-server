@@ -175,7 +175,7 @@ function sell() {
     var meme = $("#selected-stock").attr('meme');
     $.get(base_url+"/api/sell", {meme: meme}, function(data){
         if (data['status'] == 'fail')
-            toastr.error('Error.  Meme might be banned from club penguin, or you don\'t own any');
+            toastr.error(data['reason']);
         else
             toastr.success('Queued one SELL.')
         update(meme);
@@ -187,8 +187,7 @@ function buy() {
     var meme = $("#selected-stock").attr('meme');
     $.getJSON(base_url+"/api/buy", {meme: meme}, function(data){
         if (data['status'] == 'fail')
-            // alert('Error.  ');
-            toastr.error('You might be out of memebucks. Meme might be banned. Who are we to say?');
+            toastr.error(data['reason']);
         else
             toastr.success('Queued one BUY.');
         update(meme);
@@ -198,7 +197,11 @@ function buy() {
 function remove(){
     var meme = $("#selected-stock").attr('meme');
     /* Admin only. Don't bother, the backend will check your permissions */
-    $.get(base_url+"/api/admin/stock/delete", {meme: meme}, function(){
+    $.get(base_url+"/api/admin/stock/delete", {meme: meme}, function(data){
+        if (data['status'] == 'fail')
+            toastr.error(data['reason']);
+        else
+            toastr.success('Admin - Removed');
         update(meme);
     });
 }

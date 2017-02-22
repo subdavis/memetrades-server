@@ -13,8 +13,8 @@ def get_new_key():
 def success():
     return jsonify({"status":"success"})
 
-def fail():
-    return jsonify({"status":"fail"})
+def fail(reason="generic fail"):
+    return jsonify({"status":"fail", "reason":reason})
 
 def role_error(roles):
     return jsonify({"status": "fail", "reason": "user does not have permission"})

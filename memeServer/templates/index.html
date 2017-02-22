@@ -17,8 +17,9 @@
     <meta name="twitter:creator" content="@subdavis">
     <meta name="twitter:title" content="MemeTrades.com" />
     <meta name="twitter:description" content="We the developers believe that civilization is entering the golden age of meme trading." />
-    <meta name="twitter:url" content="http://memetrader.com" />
+    <meta name="twitter:url" content="http://memetrades.com" />
 
+    <!-- JS -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/canvasjs/1.7.0/canvasjs.min.js"></script>
@@ -26,6 +27,7 @@
     <script src="{{ url_for('static', filename='js/graph.js') }}"></script>
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>
 
+    <!-- CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
@@ -95,7 +97,7 @@
                 </p>
 
                 <h2>but... why?</h2>
-                <p>We the developers believe that civilization is entering the golden age of meme trading.    
+                <p>We the developers believe that civilization is entering the golden age of meme trading. 
                 </p>
 
                 <h2>other info</h2>
@@ -208,6 +210,7 @@
                     </div>
 
                     {% if view=='market' %}
+                    
                     <!-- Pagination  -->
                     <div class='pagination'>
                         <a href="?page={{ page - 1 if page > 1 else 1 }}" style="float: left;">&nbsp;⇦</a>
@@ -230,6 +233,8 @@
         {% endfor %}
         </marquee>
     </div>
+
+    <!-- BEES -->
     <script src="{{ url_for('static', filename='js/bees.js') }}"></script>
     <div style="display:none;" id="tbm"></div>
 </body>

@@ -1,8 +1,6 @@
 from flask import Flask, request, url_for, jsonify, redirect, Response, render_template
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
-
 from . import models, settings, app, utils, requires_roles
-
 import time
 
 #
@@ -28,10 +26,11 @@ def buy():
     if not stock:
         stock = models.Stock(name=meme, price=0)
         stock.save()
-
-    if current_user.queue_buy(stock):
+    try:
+        current_user.queue_buy(stock)
         return utils.success()
-    return utils.fail()
+    except Exception as e:
+        return utils.fail(reason=str(e))
 
 @app.route('/api/sell')
 @login_required
@@ -40,9 +39,12 @@ def sell():
     stock = models.Stock.objects.filter(name=meme).first()
     
     if stock:
-        if current_user.queue_sell(stock):
+        try:
+            current_user.queue_sell(stock)
             return utils.success()
-    return utils.fail()
+        except Exception as e:
+            return utils.fail(reason=str(e))
+    return utils.fail(reason="Stock does not exist")
 
 @app.route('/logout')
 @login_required
@@ -64,7 +66,7 @@ def admin_remove():
         if stock:
             stock.blacklist()
             return utils.success()
-    return utils.fail()
+    return utils.fail(reason="the stock did not exist...")
 
 #
 # Publically available APIS

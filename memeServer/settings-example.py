@@ -6,7 +6,6 @@ DATABASE = {
     "name":"memes"
 }
 
-
 LAG_ALLOWED=1.5
 # Generate this once, and only change it when you want to forece everyone to be logged out.
 SECRET_KEY="EXAMPLE" 
@@ -30,3 +29,6 @@ FACEBOOK = {
 
 #Used to tell facebook where to redirect
 SERVER_NAME="http://my_server_name"
+
+# Under no circumstances should these words be included...
+BANLIST = []
