@@ -101,22 +101,17 @@ stocks_cache={}
 stocks_timestamp={}
 @app.route('/api/stocks')
 def stocks():
-
     page = int(request.args.get('page')) if request.args.get('page') else 1
 
+    # if the cache is fresh
     if (page in stocks_timestamp) and (stocks_timestamp[page]  > time.time() - settings.LAG_ALLOWED):    
-        print "cached"
-	return stocks_cache[page]
-
+        return stocks_cache[page]
     
-    
+    # if the cache is stale
     offset = (page - 1) * settings.STOCKS_PER_PAGE
     all_stocks = get_paged_stocks(page)
-    
     stocks_cache[page] = Response(all_stocks.to_json(), mimetype="application/json")
-    
     stocks_timestamp[page] = time.time()
-
     return stocks_cache[page]
 
 history_cache = {}
@@ -126,8 +121,7 @@ def history():
     meme = request.args.get("meme")
 
     if (meme in history_timestamp) and (history_timestamp[meme] > time.time() - settings.LAG_ALLOWED * 3):
-        print "cached"
-	return history_cache[meme]
+        return history_cache[meme]
 
     stock = models.Stock.objects.filter(name=meme).first()
     if stock:
