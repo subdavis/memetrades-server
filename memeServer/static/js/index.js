@@ -86,7 +86,7 @@ function tableCreate(el, data, query)
             : document.createTextNode(""));
 
         var td_value = tr.insertCell();
-        td_value.appendChild(document.createTextNode(data[i]['name']));
+        td_value.appendChild(document.createTextNode((data[i]['blacklisted'] ? '(BANNED**) ' : '') + data[i]['name']));
         td_value.setAttribute('class', 'meme-name');
     }
 
