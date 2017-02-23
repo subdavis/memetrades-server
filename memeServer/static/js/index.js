@@ -8,9 +8,7 @@ var last_load;
 
 function is_authenticated(){
     var portfolio = $("#account-info");
-    if (portfolio.length > 0)
-        return true;
-    return false;
+    return (portfolio.length > 0);
 }
 
 function get_view(){
@@ -177,7 +175,7 @@ function sell() {
         if (data['status'] == 'fail')
             toastr.error(data['reason']);
         else
-            toastr.success('Queued one SELL.')
+            toastr.success('Queued one SELL.');
         update(meme);
     });
 }

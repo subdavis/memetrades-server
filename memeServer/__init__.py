@@ -128,7 +128,7 @@ def oauth_authorized(resp):
         # Check for referral..
         state = request.args.get('state')
         if state != "NONE":
-            print("Referral for " + user.name)
+            print("Referral for " + user.name.encode('ascii', 'ignore'))
             user.money += settings.MONEY_PER_REFERRAL
             user.try_referral(state)
         user.save()

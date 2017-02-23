@@ -23,65 +23,6 @@ class GenericFailException(Exception):
 # 
 # Model Classes
 #
-class Stock(Document):
-    name=StringField(required=True)
-    price=FloatField(required=True)
-    trend=FloatField()
-    blacklisted=BooleanField()
-
-    def buy_one(self, user):
-        if self.blacklisted:
-            return False
-        self.price += 1
-        hist = StockHistoryEntry(
-            stock=self, 
-            time=time.time(),
-            user=user, 
-            price=self.price)
-        hist.save()
-        self.trend = 1.0
-        self.blacklisted = False
-        self.save()
-        return True
-
-    def sell_one(self, user):
-        if self.blacklisted:
-            return False
-        self.price -= 1
-        hist = StockHistoryEntry(
-            stock=self, 
-            time=time.time(), 
-            user=user,
-            price=self.price)
-        hist.save()
-        self.trend = -1.0
-        self.save()
-        return True
-
-    def get_id(self):
-        return str(self.id)
-
-    def get_value(self, amount):
-        """Get the current evaluation of a stock"""
-        if amount > 0:
-            total_worth = (self.price * (self.price + 1)) / 2.0
-            other_worth = 0
-            if amount < self.price:
-                # Others own shares...
-                not_my_shares = self.price - amount
-                other_worth = (not_my_shares*(not_my_shares+1)) / 2.0
-            return total_worth - other_worth
-        return 0
-
-    def blacklist(self):
-        """
-        Flag the meme as blacklisted, and don't show on the main page.
-        It will continue to show in a shareholder's portfolio, but they cannot buy or sell.
-        """
-        self.blacklisted = True
-        self.save()
-
-
 class User(Document):
     fb_id=StringField(required=True, primary_key=True) #Primary 
     holdings=DictField()
@@ -225,6 +166,67 @@ class User(Document):
     @property
     def is_admin(self):
         return self.admin
+
+
+class Stock(Document):
+    name=StringField(required=True)
+    price=FloatField(required=True)
+    trend=FloatField()
+    blacklisted=BooleanField()
+    creator=ReferenceField(User)
+
+    def buy_one(self, user):
+        if self.blacklisted:
+            return False
+        self.price += 1
+        hist = StockHistoryEntry(
+            stock=self, 
+            time=time.time(),
+            user=user, 
+            price=self.price)
+        hist.save()
+        self.trend = 1.0
+        self.blacklisted = False
+        self.save()
+        return True
+
+    def sell_one(self, user):
+        if self.blacklisted:
+            return False
+        self.price -= 1
+        hist = StockHistoryEntry(
+            stock=self, 
+            time=time.time(), 
+            user=user,
+            price=self.price)
+        hist.save()
+        self.trend = -1.0
+        self.save()
+        return True
+
+    def get_id(self):
+        return str(self.id)
+
+    def get_value(self, amount):
+        """Get the current evaluation of a stock"""
+        if amount > 0:
+            total_worth = (self.price * (self.price + 1)) / 2.0
+            other_worth = 0
+            if amount < self.price:
+                # Others own shares...
+                not_my_shares = self.price - amount
+                other_worth = (not_my_shares*(not_my_shares+1)) / 2.0
+            return total_worth - other_worth
+        return 0
+
+    def blacklist(self):
+        """
+        Flag the meme as blacklisted, and don't show on the main page.
+        It will continue to show in a shareholder's portfolio, but they cannot buy or sell.
+        """
+        self.blacklisted = True
+        self.save()
+
 
 class StockHistoryEntry(Document):
     stock=ReferenceField(Stock, required=True)
