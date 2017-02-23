@@ -315,7 +315,7 @@ def ban_meme(meme_id):
             }
         ])
     for user in users_owning_meme:
-        real_user = User.objects.get(fb_id=user['id'])
+        real_user = User.objects.get(fb_id=user['_id'])
         real_user.last_banned_ownership = time.time()
         real_user.save()
     return
