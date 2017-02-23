@@ -29,6 +29,3 @@ FACEBOOK = {
 
 #Used to tell facebook where to redirect
 SERVER_NAME="http://my_server_name"
-
-# Under no circumstances should these words be included...
-BANLIST = []
