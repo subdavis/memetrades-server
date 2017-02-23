@@ -195,13 +195,15 @@ function buy() {
 function remove(){
     var meme = $("#selected-stock").attr('meme');
     /* Admin only. Don't bother, the backend will check your permissions */
-    $.get(base_url+"/api/admin/stock/delete", {meme: meme}, function(data){
-        if (data['status'] == 'fail')
-            toastr.error(data['reason']);
-        else
-            toastr.success('Admin - Removed');
-        update(meme);
-    });
+    if (confirm("Admin remove " + meme + "?")){
+        $.get(base_url+"/api/admin/stock/delete", {meme: meme}, function(data){
+            if (data['status'] == 'fail')
+                toastr.error(data['reason']);
+            else
+                toastr.success('Admin - Removed');
+            update(meme);
+        });
+    }
 }
 
 function search(){
