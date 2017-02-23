@@ -130,15 +130,16 @@ class User(Document):
         """
         ret = []
         for key in self.holdings.keys():
-            stock = Stock.objects.get(id=key)
-            ret.append({
-                "name": stock.name, 
-                "amount": self.holdings[key],
-                "id": key,
-                "price": stock.price,
-                "trend": stock.trend,
-                "blacklisted": stock.blacklisted
-            })
+            if self.holdings[key] > 0:
+                stock = Stock.objects.get(id=key)
+                ret.append({
+                    "name": stock.name, 
+                    "amount": self.holdings[key],
+                    "id": key,
+                    "price": stock.price,
+                    "trend": stock.trend,
+                    "blacklisted": stock.blacklisted
+                })
         ret = sorted(ret, 
             key=lambda k: k['amount'], 
             reverse=True) 
