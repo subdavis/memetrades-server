@@ -9,6 +9,9 @@ table {
 td {
     cursor: pointer;
 }
+td.banned {
+    background-color: red;
+}
 table.portfolio{
     font-size: 22px;
     margin: 8px;

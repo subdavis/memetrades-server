@@ -136,7 +136,8 @@ class User(Document):
                 "amount": self.holdings[key],
                 "id": key,
                 "price": stock.price,
-                "trend": stock.trend
+                "trend": stock.trend,
+                "blacklisted": stock.blacklisted
             })
         ret = sorted(ret, 
             key=lambda k: k['amount'], 
