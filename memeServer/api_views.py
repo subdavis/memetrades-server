@@ -1,6 +1,6 @@
 from flask import Flask, request, url_for, jsonify, redirect, Response, render_template
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
-from . import models, settings, app, utils, requires_roles
+from . import models, settings, app, utils, requires_roles, load_user
 import time
 
 #
@@ -24,7 +24,7 @@ def buy():
     meme = request.args.get("meme").strip()
     stock = models.Stock.objects.filter(name=meme).first()
     if not stock:
-        stock = models.Stock(name=meme, price=0)
+        stock = models.Stock(name=meme, creator=load_user(current_user.fb_id), price=0)
         stock.save()
     try:
         current_user.queue_buy(stock)
@@ -65,6 +65,7 @@ def admin_remove():
         stock = models.Stock.objects.filter(name=meme).first()
         if stock:
             stock.blacklist()
+            models.ban_meme(stock.id)
             return utils.success()
     return utils.fail(reason="the stock did not exist...")
 
