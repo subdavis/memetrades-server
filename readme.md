@@ -20,7 +20,7 @@ Memetrades runs on Ubuntu, and we aren't going to support anything else.
 5. Create a copy of memeServer/settings-example.py as memeServer/settings.py
 6. Run `python wsgi.py`
 7. Run `python process_queue.py`
-8. Run `python update.py' every 2 minutes or so. use a cron job or something. IDK, sue me
+8. Run `python update.py` every 2 minutes or so. use a cron job or something. IDK, sue me
 9. Server will be localhost:8080
 
 ### Pull requests
