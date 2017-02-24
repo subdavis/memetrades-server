@@ -70,7 +70,7 @@ function tableCreate(el, data, query)
         var td_amount = tr.insertCell();
         if ('amount' in data[i]){
             if (data[i]['amount'] == 0)
-                break;
+                continue;
             td_amount.appendChild(document.createTextNode(data[i]['amount']));
         } else {
             // TODO get_portfolio_amount()
