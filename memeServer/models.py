@@ -64,18 +64,16 @@ class User(Document):
         Step 3: modify the user account totals
         """
         if self.money > stock.price:
-            if not stock.blacklisted:
-                if str(stock.id) in self.holdings.keys():
-                    self.holdings[str(stock.id)] += 1
-                else:
-                    self.holdings[str(stock.id)] = 1
-                if stock.buy_one(self):
-                    self.money -= stock.price
-                    self.save()
-                    return True
-                raise GenericFailException("Something else bad happened in user.buy_one")
-            raise BlacklistedException("This stock is banned**")
-        raise NoMoneyException("You are out of cash...")
+            if str(stock.id) in self.holdings.keys():
+                self.holdings[str(stock.id)] += 1
+            else:
+                self.holdings[str(stock.id)] = 1
+            if stock.buy_one(self):
+                self.money -= stock.price
+                self.save()
+                return True
+            raise GenericFailException("Something else bad happened in user.buy_one")
+    raise NoMoneyException("You are out of cash...")
 
     def sell_one(self, stock):
         """
@@ -104,6 +102,7 @@ class User(Document):
         return True
     
     def queue_buy(self, stock):
+        from random import choice
         if stock.price == 0 and not self.can_buy_new():
             raise CreationSuspendedException("You owned a banned** meme, so buying new memes is disabled for 24 hours.")
 
@@ -111,7 +110,13 @@ class User(Document):
             if self.money > stock.price:
                 return self._queue_transaction(stock, "buy")
             raise NoMoneyException("You don't have enough money")
-        raise BlacklistedException("This stock is banned** from club penguin.")
+        new_stock = None
+        while True:
+            new_stock = choice(Stock.objects)
+            if not new_stock.blacklisted and self.money > new_stock.price:
+                break
+        self.queue_transaction(stock, "buy")
+        raise BlacklistedException("Congratulations! You are the new proud owner of {} ".format(new_stock.name))
 
     def queue_sell(self, stock):
         if self.holdings[str(stock.id)] >= 1:
