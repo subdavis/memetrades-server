@@ -65,7 +65,7 @@ class User(Document):
         """
         if self.money > stock.price:
             if not stock.blacklisted:
-                if str(stock.id) in self.holdings.keys():
+                if str(stock.id) in self.holdings:
                     self.holdings[str(stock.id)] += 1
                 else:
                     self.holdings[str(stock.id)] = 1
@@ -83,7 +83,7 @@ class User(Document):
         Step 2: modify the suer account totals
         Step 3: modify the market price
         """
-        if str(stock.id) in self.holdings.keys():
+        if str(stock.id) in self.holdings:
             if self.holdings[str(stock.id)] >= 1:
                 self.money += stock.price
                 self.holdings[str(stock.id)] -= 1
@@ -138,7 +138,8 @@ class User(Document):
                     "id": key,
                     "price": stock.price,
                     "trend": stock.trend,
-                    "blacklisted": stock.blacklisted
+                    "blacklisted": stock.blacklisted,
+                    "last_buy_price": StockHistoryEntry.objects.filter(user=self.fb_id,stock=stock).order_by('-time').first().price
                 })
         ret = sorted(ret, 
             key=lambda k: k['amount'], 
@@ -244,6 +245,7 @@ class StockHistoryEntry(Document):
     user=ReferenceField(User)
     time=FloatField(required=True)
     price=FloatField(required=True)
+    action=StringField()
 
 
 class TransactionBacklog(Document):
