@@ -139,7 +139,6 @@ class User(Document):
                     "price": stock.price,
                     "trend": stock.trend,
                     "blacklisted": stock.blacklisted,
-                    "last_buy_price": StockHistoryEntry.objects.filter(user=self.fb_id,stock=stock).order_by('-time').first().price
                 })
         ret = sorted(ret, 
             key=lambda k: k['amount'], 
