@@ -25,6 +25,7 @@ function graph(meme, base_url) {
             type: 'datetime'
         },
         yAxis: {
+            floor: 0,
             title: {
                 text: 'Stock value'
             }
