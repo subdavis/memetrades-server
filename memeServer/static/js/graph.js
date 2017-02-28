@@ -37,6 +37,7 @@ function graph(meme, base_url) {
             area: {
                 // higher the cropThreshold, the more points you can graph
                 // while retaining zoom functionality
+                animation: false,
                 cropThreshold: 1000,
                 fillColor: {
                     linearGradient: {
