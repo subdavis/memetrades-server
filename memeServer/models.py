@@ -139,6 +139,7 @@ class User(Document):
                     "price": stock.price,
                     "trend": stock.trend,
                     "blacklisted": stock.blacklisted,
+                    "last_buy": stock.get_last_buy(self) # Experimental
                 })
         ret = sorted(ret, 
             key=lambda k: k['amount'], 
@@ -196,7 +197,8 @@ class Stock(Document):
             stock=self, 
             time=time.time(),
             user=user, 
-            price=self.price)
+            price=self.price,
+            action='buy')
         hist.save()
         self.trend = 1.0
         self.blacklisted = False
@@ -209,7 +211,8 @@ class Stock(Document):
             stock=self, 
             time=time.time(), 
             user=user,
-            price=self.price)
+            price=self.price,
+            action='sell')
         hist.save()
         self.trend = -1.0
         self.save()
@@ -237,6 +240,13 @@ class Stock(Document):
         """
         self.blacklisted = True
         self.save()
+
+    def get_last_buy(self, user):
+        """
+        Get the last buy a user made
+        """
+        last_buy_hist = StockHistoryEntry.objects.filter(user=user, stock=self, action='buy').order_by('-time').first()
+        return last_buy_hist.price if last_buy_hist else -1
 
 
 class StockHistoryEntry(Document):
