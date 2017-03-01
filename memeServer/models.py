@@ -293,7 +293,7 @@ def get_trending():
     results = StockHistoryEntry._get_collection().aggregate([
             {
                 '$match': {
-                    'time': { '$gte' : time.time() - 86400 }
+                    'time': { '$gte' : time.time() - 86400 },
                 }
             },
             {
@@ -308,13 +308,16 @@ def get_trending():
     ret = []
     for r in results:
         stock = Stock.objects.get(id=r['_id'])
-        ret.append({
-            "id": str(stock.id),
-            "name": stock.name,
-            "price": stock.price,
-            "trend": stock.trend,
-            "amount": r['count'] # spoof the amount in my stocks....
-        })
+        if stock.blacklisted:
+            continue
+        else:
+            ret.append({
+                "id": str(stock.id),
+                "name": stock.name,
+                "price": stock.price,
+                "trend": stock.trend,
+                "amount": r['count'] # spoof the amount in my stocks....
+            })
     return ret
 
 def get_leaders():
