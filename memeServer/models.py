@@ -1,6 +1,7 @@
 from mongoengine import *
 import time
 import datetime
+import copy
 from functools import wraps
 
 from . import utils
@@ -25,6 +26,7 @@ class CreationSuspendedException(Exception):
 # 
 # Model Classes
 #
+
 class User(Document):
     fb_id=StringField(required=True, primary_key=True) #Primary 
     holdings=DictField()
@@ -38,7 +40,13 @@ class User(Document):
 
     # holdings Example 
     # { 
-    #    "stock_id": amount
+    #    "stock_id": {
+    #       "average_buy: 0,
+    #       "average_sell": 0,
+    #       "last_buy": 0,
+    #       "last_sell": 0,
+    #       "amount": 0,
+    #   }
     # }
 
     def init(self, name, fb_id):
@@ -66,9 +74,18 @@ class User(Document):
         if self.money > stock.price:
             if not stock.blacklisted:
                 if str(stock.id) in self.holdings:
-                    self.holdings[str(stock.id)] += 1
+                    stock_dict = self.holdings[str(stock.id)]
+                    stock_dict['amount'] += 1
+                    stock_dict['last_buy'] = stock.price
+                    stock_dict['average_buy'] = 0
                 else:
-                    self.holdings[str(stock.id)] = 1
+                    self.holdings[str(stock.id)] = {
+                        "amount": 1,
+                        "average_buy": stock.price+1,
+                        "average_sell": -1,
+                        "last_buy": stock.price+1,
+                        "last_sell": -1,
+                    }
                 if stock.buy_one(self):
                     self.money -= stock.price
                     self.save()
@@ -84,9 +101,11 @@ class User(Document):
         Step 3: modify the market price
         """
         if str(stock.id) in self.holdings:
-            if self.holdings[str(stock.id)] >= 1:
+            stock_dict = self.holdings[str(stock.id)]
+            if stock_dict['amount'] >= 1:
                 self.money += stock.price
-                self.holdings[str(stock.id)] -= 1
+                stock_dict['amount'] -= 1
+                stock_dict['last_sell'] = stock.price
                 if stock.sell_one(self):
                     self.save()
                     return True
@@ -114,7 +133,7 @@ class User(Document):
         raise BlacklistedException("This stock is banned** from club penguin.")
 
     def queue_sell(self, stock):
-        if self.holdings[str(stock.id)] >= 1:
+        if self.holdings[str(stock.id)]['amount'] >= 1:
             return self._queue_transaction(stock, "sell")
         raise ThisMemeNotInPortfolio("You don't have any of this stock...")
 
@@ -130,11 +149,13 @@ class User(Document):
         """
         ret = []
         for key in self.holdings.keys():
-            if self.holdings[key] > 0:
+            if self.holdings[key]['amount'] > 0:
                 stock = Stock.objects.get(id=key)
                 ret.append({
                     "name": stock.name, 
-                    "amount": self.holdings[key],
+                    "amount": self.holdings[key]['amount'],
+                    "last_buy": self.holdings[key]['last_buy'],
+                    "last_sell": self.holdings[key]['last_sell'],
                     "id": key,
                     "price": stock.price,
                     "trend": stock.trend,
@@ -179,7 +200,6 @@ class User(Document):
     @property
     def is_admin(self):
         return self.admin
-
 
 class Stock(Document):
     name=StringField(required=True)
@@ -238,14 +258,12 @@ class Stock(Document):
         self.blacklisted = True
         self.save()
 
-
 class StockHistoryEntry(Document):
-    stock=ReferenceField(Stock, required=True)
-    user=ReferenceField(User)
+    stock=ReferenceField('Stock', required=True)
+    user=ReferenceField('User')
     time=FloatField(required=True)
     price=FloatField(required=True)
     action=StringField()
-
 
 class TransactionBacklog(Document):
     stock=ReferenceField(Stock, required=True)
@@ -340,7 +358,7 @@ def get_leaders():
 
 def ban_meme(meme_id):
     match_dict = {}
-    match_dict['holdings.{meme_id}'.format(meme_id=meme_id)] = { '$gt' : 0 }
+    match_dict['holdings.{meme_id}.amount'.format(meme_id=meme_id)] = { '$gt' : 0 }
     users_owning_meme = User._get_collection().aggregate([
             {
                 '$match': match_dict
@@ -383,9 +401,26 @@ def sanity_checks():
     #     user.referral_code = utils.get_new_key()
     #     user.save()
     
-    users = User.objects(last_banned_ownership__exists=False)
-    for user in users:
-        user.last_banned_ownership = 0
-        user.save()
+    # users = User.objects(last_banned_ownership__exists=False)
+    # for user in users:
+    #     user.last_banned_ownership = 0
+    #     user.save()
 
+    users = User.objects
+    for user in users:
+        keys = user.holdings.keys()
+        if len(keys) > 0:
+            holdings_cpy = copy.deepcopy(user.holdings)
+            if type(holdings_cpy[keys[0]]) == int:
+                user.holdings = {}
+                for key in keys:
+                    new_holding = {
+                        "amount"      : holdings_cpy[key],
+                        "last_buy"    : -1,
+                        "last_sell"   : -1,
+                        "average_buy" : -1,
+                        "average_sell": -1
+                    }
+                    user.holdings[key] = new_holding
+                user.save()
     pass

@@ -9,10 +9,10 @@ from memeServer import models
 while True:
     transactions = models.TransactionBacklog.objects().order_by('time')
     for t in transactions:
-        try: 
-            t.process()
-        except Exception as e:
-            print("* transaction failed:" + str(e))
+        # try: 
+        t.process()
+        # except Exception as e:
+        #     print("* transaction failed:" + str(e))
         t.delete()
     time.sleep(.1)
 #except Exception as e:
