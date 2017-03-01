@@ -106,7 +106,7 @@
                 </p>
 
                 <h2>buy this website</h2>
-                <p>buy this website for 1 bitcoin.  So we can say we sold something for a bitcoin.  email developers@memetrades.com for details.  Don't worry, the website isn't going down.</p>
+                <p>buy this website for 3 bitcoin.  So we can say we sold something for a bitcoin.  email developers@memetrades.com for details.  Don't worry, the website isn't going down.</p>
 
                 <h2>other info</h2>
                 <ul>
@@ -179,25 +179,25 @@
                             </div>
                         </div>
                     </div>
-
+                    <a id="scrollhere"></a>
                     <!-- Table nav -->
                     <div id="{{ view }}" class='col-md-12'>
                         <ul class="nav nav-tabs">
                           
                           <li class='{{ "active" if view=="market" else "" }}'>
-                            <a href="/">All Stocks</a>
+                            <a href="/#scrollhere">All Stocks</a>
                           </li>
                           
                           {% if current_user.is_authenticated %}
-                            <li class='{{ "active" if view=="portfolio" else "" }}'><a href="/portfolio">My Stocks</a></li>
+                            <li class='{{ "active" if view=="portfolio" else "" }}'><a href="/portfolio#scrollhere">My Stocks</a></li>
                           {% endif %}
 
                           <li class='{{ "active" if view=="recent" else "" }}'>
-                            <a href="/recent">All Recent Trades</a>
+                            <a href="/recent#scrollhere">All Recent Trades</a>
                           </li>
 
                           <li class='{{ "active" if view=="trending" else "" }}'>
-                            <a href='/trending'>Trending</a>
+                            <a href='/trending#scrollhere'>Trending</a>
                           </li>
                         
                         </ul>
@@ -205,7 +205,7 @@
                     <br>
 
                     <!-- Stock Table -->
-                    <div id="jsonM">
+                    <div id="jsonM" name="stocklist">
                         <table>
                             <tr class='economy-header'>
                                 <td>#</td>
@@ -234,9 +234,9 @@
                     
                     <!-- Pagination  -->
                     <div class='pagination'>
-                        <a href="?page={{ page - 1 if page > 1 else 1 }}" style="float: left;">&nbsp;⇦</a>
+                        <a href="?page={{ page - 1 if page > 1 else 1 }}#scrollhere" style="float: left;">&nbsp;⇦</a>
                             Page: <span id="pagenumber">{{ page }}</span> 
-                        <a href="?page={{ page + 1 }}" style="float: right;">⇨&nbsp;</a>
+                        <a href="?page={{ page + 1 }}#scrollhere" style="float: right;">⇨&nbsp;</a>
                     </div>
                     {% endif %}
 

@@ -113,6 +113,9 @@ function tableCreate(el, data, query)
         if (is_authenticated())
             document.getElementById("meme").value = this.getAttribute('meme');
         board_display(this.getAttribute('meme'));
+        
+	document.getElementById("selected-stock").scrollIntoView(
+	       {block: "start", behavior: "smooth"});
     });
 }
 
