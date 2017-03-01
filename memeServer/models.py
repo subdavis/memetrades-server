@@ -151,11 +151,12 @@ class User(Document):
         for key in self.holdings.keys():
             if self.holdings[key]['amount'] > 0:
                 stock = Stock.objects.get(id=key)
+                stock_dict = self.holdings[key]
                 ret.append({
                     "name": stock.name, 
-                    "amount": self.holdings[key]['amount'],
-                    "last_buy": self.holdings[key]['last_buy'],
-                    "last_sell": self.holdings[key]['last_sell'],
+                    "amount": stock_dict['amount'],
+                    "last_buy": stock_dict['last_buy'],
+                    "last_sell": stock_dict['last_sell'],
                     "id": key,
                     "price": stock.price,
                     "trend": stock.trend,
