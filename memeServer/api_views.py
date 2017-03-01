@@ -72,11 +72,20 @@ def admin_remove():
 #
 # Publically available APIS
 #
-
+trending_cache=""
+trending_timestamp=-100000
 @app.route('/api/trending')
-def trends():
+def trends():    
+    global trending_timestamp
+    global trending_cache
+    if time.time() < trending_timestamp + 90*settings.LAG_ALLOWED:
+	print "cached"
+	return trending_cache
+    trending_timestamp = time.time() 
     results = models.get_trending()
-    return jsonify(results)
+    trending_cache = jsonify(results)
+    
+    return trending_cache
 
 @app.route('/api/search')
 def search():
