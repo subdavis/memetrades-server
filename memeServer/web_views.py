@@ -57,6 +57,21 @@ def index_recent():
         stock=stock,
         page=1)
 
+@app.route('/trending')
+def index_trending():
+    leaders = models.get_leaders()
+    stocks = models.get_trending()
+    stock = None;
+    if len(stocks) >= 1:
+        stock = stocks[0]
+    return render_template('index.html',
+        view="trending",
+        base_url=settings.SERVER_NAME,
+        leaders=leaders,
+        stocks=stocks,
+        stock=stock,
+        page=1)
+
 @app.route('/stock/<stockid>')
 def index_stock(stockid):
     try:

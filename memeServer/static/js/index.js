@@ -14,10 +14,13 @@ function is_authenticated(){
 function get_view(){
     var market = $("#market");
     if (market.length > 0)
-        return "market"
+        return "market";
     var recent = $("#recent");
     if (recent.length > 0)
-        return "recent"
+        return "recent";
+    var trending = $('#trending');
+    if (trending.length > 0)
+        return 'trending';
     return "portfolio"
 }
 
@@ -155,6 +158,12 @@ function updateRecent(){
     });
 }
 
+function updateTrending(){
+    $.getJSON(base_url+'/api/trending', function(data) {
+        tableCreate($("#jsonM"), data);
+    });  
+}
+
 function update(meme){
     // Decide what to do depending on what view we are in....
     if (is_authenticated())
@@ -164,6 +173,8 @@ function update(meme){
         updateMarket();
     if (view == "recent")
         updateRecent();
+    if (view == 'trending')
+        updateTrending();
     if (meme)
         board_display(meme);
 }

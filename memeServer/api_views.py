@@ -73,6 +73,11 @@ def admin_remove():
 # Publically available APIS
 #
 
+@app.route('/api/trending')
+def trends():
+    results = models.get_trending()
+    return jsonify(results)
+
 @app.route('/api/search')
 def search():
     query=request.args.get("q")

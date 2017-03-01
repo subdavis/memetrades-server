@@ -153,7 +153,7 @@
                         <span id="selected-price">Price: {{ stock.price if stock else '' }}</span>
                         <span id="selected-trend">Trend:</span>
                         <span>Link:
-                            <a id="selected-link" href="{{ base_url+'/stock/'+stock.id if view == 'recent' else (base_url+'/stock/'+stock.get_id() if stock else '#') }}">
+                            <a id="selected-link" href="{{ base_url+'/stock/'+stock.id if view in ['recent','trending'] else (base_url+'/stock/'+stock.get_id() if stock else '#') }}">
                                 <img src="{{ url_for('static', filename='img/link.png') }}" width=32 height=32>
                             </a>
                         </span>
@@ -194,6 +194,10 @@
 
                           <li class='{{ "active" if view=="recent" else "" }}'>
                             <a href="/recent">All Recent Trades</a>
+                          </li>
+
+                          <li class='{{ "active" if view=="trending" else "" }}'>
+                            <a href='/trending'>Trending</a>
                           </li>
                         
                         </ul>
