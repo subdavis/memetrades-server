@@ -43,6 +43,15 @@ function board_display(meme){
     graph(meme, base_url);
 }
 
+function stock_prefix(entry){
+    ret = ''
+    if (entry['blacklisted'])
+        ret += "(BANNED**) "
+    if (entry['last_buy'])
+        if (entry['last_buy'] >= 0 )
+            ret += "(B: "+entry['last_buy']+") "
+    return ret
+}
 function tableCreate(el, data, query)
 {
     el.empty();
@@ -86,7 +95,7 @@ function tableCreate(el, data, query)
             : document.createTextNode(""));
 
         var td_value = tr.insertCell();
-        td_value.appendChild(document.createTextNode((data[i]['blacklisted'] ? '(BANNED**) ' : '') + data[i]['name']));
+        td_value.appendChild(document.createTextNode(stock_prefix(data[i]) + data[i]['name']));
         td_value.setAttribute('class', 'meme-name');
     }
 
