@@ -21,7 +21,14 @@ Memetrades runs on Ubuntu, and we aren't going to support anything else.
 6. Run `python wsgi.py`
 7. Run `python process_queue.py`
 8. Run `python update.py` every 2 minutes or so. use a cron job or something. IDK, sue me
-9. Server will be localhost:8080
+9. open mongo and type
+use memes
+db.stock_history_entry.createIndex({"time":1})
+db.stock_history_entry.createIndex({"stock":1})
+what? you don't want to get your hands dirty and mess with mongo? 
+You think this could have been automated? You're still mad about the cron job?
+I'm tired of getting sass from you. Cash me ousside, How bow dah.
+10. Server will be localhost:8080
 
 ### Pull requests
 
