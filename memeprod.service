@@ -1,0 +1,12 @@
+[Unit]
+Description=meme gunicorn daemon
+After=network.target
+
+[Service]
+User=bdavis
+Group=www-data
+WorkingDirectory=/opt/pypy/prodserver/
+ExecStart=/opt/pypy/pypy/bin/gunicorn --workers 5 --bind unix:/tmp/meme-prod.sock wsgi:application
+
+[Install]
+WantedBy=multi-user.target

@@ -40,3 +40,19 @@ I'm tired of getting sass from you. Cash me ousside, How bow dah.
 ### Pull requests
 
 we will look at them.  Submit an issue along with the PR so we know what you're doing.
+
+
+### Maintenance.
+
+restart prod:
+
+sudo systemctl restart memeprod.service
+
+restart dev:
+
+sudo systemctl restart memedev.service
+
+restart nginx:
+
+1. test config: sudo nginx -t
+2. restart: sudo service nginx restart
