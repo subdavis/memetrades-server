@@ -95,7 +95,7 @@ function tableCreate(el, data, query)
 
     if (query) {
         //prompt to "add new"
-        var newtext = "Inspect meme " + query;
+        var newtext = "Create meme " + query;
 
         var trh = tbl.insertRow();
         var th_new = trh.insertCell();
