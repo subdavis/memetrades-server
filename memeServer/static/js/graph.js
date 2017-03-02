@@ -1,5 +1,5 @@
 function graph(meme, base_url) {
-  $.getJSON("/api/history?meme=" + meme, function (data) {
+  $.getJSON("/api/history", {"meme":meme}, function (data) {
     var formattedData = new Array();
     
     // format data to [time, price] format
