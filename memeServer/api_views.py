@@ -64,9 +64,12 @@ def admin_remove():
     if meme:
         stock = models.Stock.objects.filter(name=meme).first()
         if stock:
-            stock.blacklist()
-            models.ban_meme(stock.id)
-            return utils.success()
+            if not stock.blacklisted:
+                stock.blacklist()
+                models.ban_meme(stock.id)
+                return utils.success()
+            return utils.fail(reason="stock already blacklisted...")
+        return utils.fail(reason="the stock did not exist...")
     return utils.fail(reason="the stock did not exist...")
 
 #
