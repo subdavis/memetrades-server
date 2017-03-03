@@ -173,8 +173,8 @@ def recent():
 # SMTP Receiver endpoints....
 #
 
-@app.route('/email/inbound')
-def inboud(methods=['POST','GET']):
+@app.route('/email/inbound', methods=['POST','GET'])
+def inboud():
     print("Triggered inbount")
     print(request.method)
     return ""
