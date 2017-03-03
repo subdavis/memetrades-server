@@ -210,6 +210,9 @@ def inboud():
                                 #store the record for later...
                                 if user.donation_count:
                                     user.donation_count += 1
+                                    if user.donation_count > 30:
+                                        user.donation_replies.append("You've done this too many times")
+                                        break
                                 else:
                                     user.donation_count = 1
                                 if user.donation_replies:
