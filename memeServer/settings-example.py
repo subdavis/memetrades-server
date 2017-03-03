@@ -24,7 +24,7 @@ WEBHOOK_ID='CHANGE'
 DONATION_DOMAIN='donations.memetrades.com'
 CHARITY_DATA = {
     "email_from": "CHANGE",
-    "subject": "CHANGE",
+    "subject": ["CHANGE"],
 }
 
 # Get this from developers.facebook.com 

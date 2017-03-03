@@ -197,9 +197,20 @@ def inboud():
                     # See if the email matches what we expect..
                     if user and (webhook_id == settings.WEBHOOK_ID):
                         if msg_from == settings.CHARITY_DATA['from']:
-                            if subject == settings.CHARITY_DATA['subject']:
+                            if subject in settings.CHARITY_DATA['subject']:
                                 print("MAIL RECEIPT YES FOR " + user.name)
                                 user.money += 1000
+
+                                #store the record for later...
+                                if user.donation_count:
+                                    user.donation_count += 1
+                                else:
+                                    user.donation_count = 1
+                                if user.donation_replies:
+                                    user.donation_replies.append(email['msys']['relay_message']['content']['text'])
+                                else:
+                                    user.donation_replies = [email['msys']['relay_message']['content']['text']]
+
                                 user.save()
                                 number_success += 1
                             else:

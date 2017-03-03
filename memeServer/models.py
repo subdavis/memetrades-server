@@ -36,6 +36,10 @@ class User(Document):
     last_banned_ownership=FloatField()
     admin=BooleanField()
 
+    # For charity stuff
+    donation_count=IntField()
+    donation_replies=ListField()
+
     # holdings Example 
     # { 
     #    "stock_id": amount

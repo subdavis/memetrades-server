@@ -33,6 +33,13 @@
                 <img src="{{ url_for('static', filename='img/email-example.png') }}"" width="600px">
 
                 <p>We only added this so we could stop feeling so bad about spending all our time on memes</p>
+
+                {% if current_user.donation_replies %}
+                    <h2>Your donation replies</h2>
+                    {% for reply in current_user.donation_replies %}
+                        <p>{{ reply }}</p>
+                    {% endfor %}
+                {% endif %}
                 
             </div>
             <div class='col-md-4'>
