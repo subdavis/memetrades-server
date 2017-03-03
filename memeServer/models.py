@@ -295,17 +295,24 @@ def get_recents():
         })
     return ret
 
+
 def get_trending():
     results = StockHistoryEntry._get_collection().aggregate([
-            {
+	    {
                 '$match': {
                     'time': { '$gte' : time.time() - 86400 },
                 }
             },
             {
-                '$group' : {
-                    '_id': '$stock',
-                    'count': {'$sum': 1},
+                "$group": {
+                    "_id": {"user":"$user", "stock": "$stock"},
+                    "stock": {"$first":"$stock"}
+                }
+            }, 
+            {
+                "$group":{
+                    "_id":"$stock",
+                    "count": {"$sum":1}
                 }
             },
             { '$sort': { 'count' : -1} },
