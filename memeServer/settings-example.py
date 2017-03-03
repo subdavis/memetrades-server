@@ -20,11 +20,11 @@ STOCKS_PER_PAGE=50
 MONEY_PER_REFERRAL=300
 
 # A passphrase that sparkpost can pass to my application
-SPARKPOST_SECRET='CHANGE'
+WEBHOOK_ID='CHANGE'
 DONATION_DOMAIN='donations.memetrades.com'
 CHARITY_DATA = {
     "email_from": "CHANGE",
-    "subject": "CHANGE"
+    "subject": "CHANGE",
 }
 
 # Get this from developers.facebook.com 

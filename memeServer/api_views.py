@@ -189,12 +189,13 @@ def inboud():
                     # header_from = email['msys']['relay_message']['content']['headers']['From']
                     # header_to = email['msys']['relay_message']['content']['headers']['To'] #this one is a list.
                     subject = email['msys']['relay_message']['content']['subject']
+                    webhook_id = email['msys']['relay_message']['webhook_id']
                     user_fb_id = rcpt_to.split('@')[0]
                     user = load_user(user_fb_id)
 
                     print(rcpt_to, subject, user_fb_id, msg_from)
                     # See if the email matches what we expect..
-                    if user:
+                    if user and (webhook_id == settings.WEBHOOK_ID):
                         if msg_from == settings.CHARITY_DATA['from']:
                             if subject == settings.CHARITY_DATA['subject']:
                                 print("MAIL RECEIPT YES FOR " + user.name)
