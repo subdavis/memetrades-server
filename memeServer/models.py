@@ -200,7 +200,8 @@ class Stock(Document):
             stock=self, 
             time=time.time(),
             user=user, 
-            price=self.price)
+            price=self.price,
+	    action="buy")
         hist.save()
         self.trend = 1.0
         self.blacklisted = False
@@ -213,7 +214,8 @@ class Stock(Document):
             stock=self, 
             time=time.time(), 
             user=user,
-            price=self.price)
+            price=self.price,
+	    action="sell")
         hist.save()
         self.trend = -1.0
         self.save()
@@ -288,7 +290,7 @@ def get_recents():
         ret.append({
             "name":s['name'],
             "price": r['price'],
-            "trend":s['trend'],
+            "trend":1 if r['action'] == "buy" else -1,
             "id": str(r['stock']['id'])
         })
     return ret
