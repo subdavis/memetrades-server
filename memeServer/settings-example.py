@@ -19,6 +19,8 @@ STOCKS_PER_PAGE=50
 MONEY_PER_REFERRAL=300
 # Number of requests per day to allow for api
 RATE_LIMIT=1000
+# A passphrase that sparkpost can pass to my application
+SPARKPOST_SECRET='CHANGE'
 
 # Get this from developers.facebook.com 
 FACEBOOK = {

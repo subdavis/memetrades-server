@@ -170,6 +170,16 @@ def recent():
     return recent_cache
 
 #
+# SMTP Receiver endpoints....
+#
+
+@app.route('/email/inbound')
+def inboud(methods=['POST','GET']):
+    print("Triggered inbount")
+    print(request.method)
+    return ""
+
+#
 # Some helpers
 #
 
