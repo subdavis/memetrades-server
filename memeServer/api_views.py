@@ -212,7 +212,8 @@ def inboud():
                                     user.donation_count += 1
                                     if user.donation_count > 30:
                                         user.donation_replies.append("You've done this too many times")
-                                        break
+                                        number_fail += 1
+                                        continue
                                 else:
                                     user.donation_count = 1
                                 if user.donation_replies:
