@@ -2,7 +2,7 @@ from flask import Flask, request, url_for, jsonify, redirect, Response, render_t
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from . import models, settings, app, utils, requires_roles, load_user
 import time
-
+import json
 #
 # Private APIs
 # 
@@ -175,8 +175,18 @@ def recent():
 
 @app.route('/email/inbound', methods=['POST','GET'])
 def inboud():
-    print("Triggered inbount")
-    print(request.method)
+    # print("Triggered inbound")
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.data)
+            # data should be a list.
+            if len(data) > 0:
+                for email in data:
+                    mail_from = email['msys']['relay_message']['msg_from']
+                    header_from = email['msys']['relay_message']['content']['headers']['From']
+                    subject = email['msys']['relay_message']['content']['headers']['Subject']
+        except Exception as e:
+            print(str(e))
     return ""
 
 #

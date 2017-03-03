@@ -21,6 +21,11 @@ MONEY_PER_REFERRAL=300
 RATE_LIMIT=1000
 # A passphrase that sparkpost can pass to my application
 SPARKPOST_SECRET='CHANGE'
+DONATION_DOMAIN='donations.memetrades.com'
+CHARITY_DATA = {
+    "email_from": "CHANGE",
+    "subject": "CHANGE"
+}
 
 # Get this from developers.facebook.com 
 FACEBOOK = {

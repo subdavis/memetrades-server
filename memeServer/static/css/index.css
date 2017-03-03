@@ -101,6 +101,8 @@ body > .container-fluid {
 .refbutton {
     width: 48%;
     margin: .5%;
+    color: white; 
+    background-color:blue;
 }
 #selected-stock {
     overflow-x: hidden;
@@ -213,4 +215,17 @@ color: yellow;
 
 #search-results {
     overflow-x: hidden;
+}
+
+#email-class {
+    font-size: 20px;
+    padding: 10px;
+    border: 2px solid red;
+    margin: 10px 0px;
+}
+#donation-link {
+    font-size: 20px;
+    padding: 10px;
+    border: 2px solid blue;
+    margin: 10px 0px;
 }

@@ -1,32 +1,47 @@
 <head>
-    <title>memetrades API</title>
+    <title>MORE memebucks</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
 </head>        
 <body>
-<div class="container">
+    <div class="container">
         <div class="row">
             <div class="col-md-12">
                 <a href="/"><h2>< Home</h2></a>
             </div>
-
-            <div class="row">
-                <div class='col-sm-12'>
-                    <div class="col-md-8">
-                        <!-- <h2>Cancer sucks.</h2> -->
-                        <!-- <h4>St. Jude Children's Research Hospital gets $1.  You get 1000 memebucks.</h4> -->
-
-                        <h3>How does this work?</h3>
-                        <p>In order to process transactions</p>
-                    </div>
-                    <div class="col-md-4">
-                        <br><br>
-                        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                        <input type="hidden" name="cmd" value="_s-xclick">
-                        <input type="hidden" name="hosted_button_id" value="CVC2QCP82ZHPG">
-                        <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-                        <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-                        </form>
-                    </div>
-                </div>
+            <div class='col-md-12'>
+                <h1>How to earn more memebucks</h1>
             </div>
+            <div class="col-md-8">
+                <h2>Method 1: </h2>
+                <h2>Donate to Breast Cancer Research Foundation</h2>
+                <h4>Cancer Sucks.  <b>Donate $1</b> (or more) to BCRF and you get <b>1000 memebucks.</b></h4>
+
+                <h3>How does this work?  READ CAREFULLY</h3>
+                <p>1. Make a donation of any amount to the Breast Cancer Research Foundation.</p>
+                <div id="donation-link">
+                    <a href="https://give.bcrfcure.org/checkout/donation?eid=33278">Link to Donate</a>
+                </div>
+
+                <p>2. When prompted, fill out your information with your special email address.  EXAMPLE BELOW.</p>
+
+                Your unique receipt email address is:
+                <div id="email-class">{{ email }}</div>
+
+                <p>3. Check back here for the status of your payment.  Could take several seconds or minutes for us to receive the email and apply to your account.</p>
+                
+                <img src="{{ url_for('static', filename='img/email-example.png') }}"" width="600px">
+
+                <p>We only added this so we could stop feeling so bad about spending all our time on memes</p>
+                
+            </div>
+            <div class='col-md-4'>
+                <h2>Method 2: </h2>
+                <h2>Refer a friend</h2>
+                <p>Send your friends your unique referral URL:</p>
+                <p><a href="{{ referral_url }}">{{ referral_url }}</a></p>
+                <p>You'll both get {{ memebucks_per_referral }} when they create an account.</p>
+            </div>
+        </div>
+    </div>
 </body>
