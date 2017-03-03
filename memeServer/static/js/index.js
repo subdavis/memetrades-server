@@ -5,6 +5,7 @@ var page;
 var portfolio_list;
 var me;
 var last_load;
+var stock_n_owned_lookup = {};
 
 function is_authenticated(){
     var portfolio = $("#account-info");
@@ -76,8 +77,7 @@ function tableCreate(el, data, query)
                 continue;
             td_amount.appendChild(document.createTextNode(data[i]['amount']));
         } else {
-            // TODO get_portfolio_amount()
-            td_amount.appendChild(document.createTextNode(''));
+            td_amount.appendChild(document.createTextNode(stock_n_owned_lookup[data[i]["name"]] || ""));
         }
 
         var td_price = tr.insertCell();
@@ -146,8 +146,13 @@ function updatePortfolio(meme) {
     if (is_authenticated()){
         $.getJSON(base_url+'/api/me', function(data) {
             me = data;
+            	    
             portfolio_list = data['stocks'];
-            updateAccount(data['stock_value'], data['money']);
+            
+            for(var i = 0; i < portfolio_list.length; i++){
+              stock_n_owned_lookup[portfolio_list[i]["name"]]=portfolio_list[i]["amount"];
+	    }
+	    updateAccount(data['stock_value'], data['money']);
             //update table on portfolio page.
             if (get_view() == "portfolio")
                 tableCreate($("#jsonM"), data['stocks']);           

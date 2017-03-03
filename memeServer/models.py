@@ -329,7 +329,7 @@ def get_trending():
                 "name": stock.name,
                 "price": stock.price,
                 "trend": stock.trend,
-                "amount": r['count'] # spoof the amount in my stocks....
+                #"amount": r['count'] # spoof the amount in my stocks....
             })
     return ret
 
