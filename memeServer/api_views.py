@@ -175,19 +175,49 @@ def recent():
 
 @app.route('/email/inbound', methods=['POST','GET'])
 def inboud():
-    # print("Triggered inbound")
     if request.method == 'POST':
         try:
+            number_success = 0
+            number_fail = 0
             data = json.loads(request.data)
             # data should be a list.
             if len(data) > 0:
                 for email in data:
-                    mail_from = email['msys']['relay_message']['msg_from']
-                    header_from = email['msys']['relay_message']['content']['headers']['From']
-                    subject = email['msys']['relay_message']['content']['headers']['Subject']
+                    # print(email)
+                    msg_from = email['msys']['relay_message']['msg_from']
+                    rcpt_to = email['msys']['relay_message']['rcpt_to']
+                    # header_from = email['msys']['relay_message']['content']['headers']['From']
+                    # header_to = email['msys']['relay_message']['content']['headers']['To'] #this one is a list.
+                    subject = email['msys']['relay_message']['content']['subject']
+                    user_fb_id = rcpt_to.split('@')[0]
+                    user = load_user(user_fb_id)
+
+                    print(rcpt_to, subject, user_fb_id, msg_from)
+                    # See if the email matches what we expect..
+                    if user:
+                        if msg_from == settings.CHARITY_DATA['from']:
+                            if subject == settings.CHARITY_DATA['subject']:
+                                print("MAIL RECEIPT YES FOR " + user.name)
+                                user.money += 1000
+                                user.save()
+                                number_success += 1
+                            else:
+                                number_fail += 1
+                        else:
+                            number_fail += 1
+                    else:
+                        number_fail += 1
+            if number_fail > 0:
+                print("MAIL RECEIPT INVALID")
+                return utils.fail(reason="unknown")
+            return utils.success()
+        
         except Exception as e:
+            print("EXCEPTION")
             print(str(e))
-    return ""
+            return utils.fail(reason="An exception was thrown")
+    else:
+        return utils.success()
 
 #
 # Some helpers

@@ -6,6 +6,7 @@ DATABASE = {
     "name":"memes"
 }
 
+# Number of seconds to keep cache.
 LAG_ALLOWED=1.5
 # Generate this once, and only change it when you want to forece everyone to be logged out.
 SECRET_KEY="EXAMPLE" 
@@ -17,8 +18,7 @@ API_KEY_LENGTH=32
 STOCKS_PER_PAGE=50
 # Number of memebucks a referral gets you.
 MONEY_PER_REFERRAL=300
-# Number of requests per day to allow for api
-RATE_LIMIT=1000
+
 # A passphrase that sparkpost can pass to my application
 SPARKPOST_SECRET='CHANGE'
 DONATION_DOMAIN='donations.memetrades.com'
