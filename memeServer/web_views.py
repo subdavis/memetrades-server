@@ -27,14 +27,19 @@ def apidocs():
         rate_limit=settings.RATE_LIMIT)
 
 @app.route('/earn-memebucks')
-@login_required
 def donate():
-    email_string = current_user.fb_id + "@" + settings.DONATION_DOMAIN
-    referral_url = "http://memetrades.com" + "/login?r=" + current_user.referral_code
-    return render_template('donate.html',
-        email=email_string,
-        referral_url=referral_url,
-        memebucks_per_referral=settings.MONEY_PER_REFERRAL)
+    if current_user.is_authenticated:
+        email_string = current_user.fb_id + "@" + settings.DONATION_DOMAIN
+        referral_url = "http://memetrades.com" + "/login?r=" + current_user.referral_code
+        return render_template('donate.html',
+            email=email_string,
+            referral_url=referral_url,
+            memebucks_per_referral=settings.MONEY_PER_REFERRAL)
+    else:
+        return render_template('donate.html',
+            email=None,
+            referral_url=None,
+            memebucks_per_referral=settings.MONEY_PER_REFERRAL)
 
 @app.route('/portfolio')
 @login_required

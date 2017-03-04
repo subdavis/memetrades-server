@@ -25,8 +25,17 @@
 
                 <p>2. When prompted, fill out your information with your special email address.  EXAMPLE BELOW.</p>
 
-                Your unique receipt email address is:
-                <div id="email-class">{{ email }}</div>
+                {% if current_user.is_authenticated %}
+                    Your unique receipt email address is:
+                    <div id="email-class">{{ email }}</div>
+                {% else %}
+                    Sign in to get your special email address:<br>
+                    <div id="email-class">
+                        <a href="/login">
+                        <img src="{{ url_for('static', filename='img/fblogin.png') }}">
+                        </a>
+                    </div>
+                {% endif %}
 
                 <p>3. Check back here for the status of your payment.  Could take several seconds or minutes for us to receive the email and apply to your account.</p>
                 
@@ -43,8 +52,17 @@
             <div class='col-md-4'>
                 <h2>Method 2: </h2>
                 <h2>Refer a friend</h2>
-                <p>Send your friends your unique referral URL:</p>
-                <p><a href="{{ referral_url }}">{{ referral_url }}</a></p>
+
+                {% if current_user.is_authenticated %}
+                    <p>Send your friends your unique referral URL:</p>
+                    <p><a href="{{ referral_url }}">{{ referral_url }}</a></p>
+                {% else %}
+                    Sign in to get your referral code.
+                    <a href="/login">
+                        <img src="{{ url_for('static', filename='img/fblogin.png') }}">
+                    </a>
+                {% endif %}
+
                 <p>You'll both get <b>{{ memebucks_per_referral }} memebucks</b> when they create an account.</p>
             </div>
         </div>
