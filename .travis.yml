@@ -1,0 +1,4 @@
+language: python
+services: mongodb
+before_script:
+  - mongo memes --eval 'db.users.find();'

@@ -56,3 +56,9 @@ restart nginx:
 
 1. test config: sudo nginx -t
 2. restart: sudo service nginx restart
+
+# Unit tests.
+
+from server/ run:
+
+`python -m unittest discover -s tests/`
