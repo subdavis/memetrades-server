@@ -1,5 +1,10 @@
 language: python
+python:
+  - "2.7"
+  - "pypy"
 sudo: required
 services: mongodb
 before_script:
   - mongorestore --db memes dump/memes
+script:
+  - "scripts/test.sh"
