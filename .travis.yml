@@ -4,7 +4,5 @@ python:
   - "pypy"
 sudo: required
 services: mongodb
-before_script:
-  - mongorestore --db memes dump/memes
 script:
   - "scripts/test.sh"

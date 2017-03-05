@@ -3,7 +3,7 @@
 
 # Mongo connection info
 DATABASE = {
-    "name":"memes"
+    "name":"memes-tests" # Just in case this gets run on production, it won't wipe out the DB
 }
 
 # Number of seconds to keep cache.
