@@ -1,4 +1,5 @@
 language: python
+sudo: required
 services: mongodb
 before_script:
-  - mongo memes --eval 'db.users.find();'
+  - mongorestore --db memes dump/memes
