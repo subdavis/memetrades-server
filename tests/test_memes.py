@@ -1,5 +1,6 @@
 import unittest
 import env
+import time
 
 from memeServer import models
 
@@ -60,3 +61,41 @@ class TestModels(unittest.TestCase):
 
         with self.assertRaises(models.ThisMemeNotInPortfolio):
             some_user.sell_one(some_stock)
+
+class TestQueueing(unittest.TestCase):
+
+    def test_queue_buy(self):
+        some_user = models.User.objects.first()
+        some_user.money = 100
+        some_user.save()
+        some_stock = models.Stock.objects.first()
+        some_stock.price = 50
+        some_stock.save()
+
+        old_price = some_stock.price
+        old_money = some_user.money
+
+        some_user.queue_buy(some_stock)
+        time.sleep(.5)
+
+        # Refetch from DB to see new prices
+        some_stock = models.Stock.objects.first()
+        some_user = models.User.objects.first()
+        self.assertTrue(some_stock.price == old_price + 1)
+        self.assertTrue(some_user.money == old_money - some_stock.price)
+
+    def test_queue_sell(self):
+        self.test_queue_buy() 
+
+        some_stock = models.Stock.objects.first()
+        some_user = models.User.objects.first()
+        old_price = some_stock.price
+        old_money = some_user.money
+
+        some_user.queue_sell(some_stock)
+
+        time.sleep(.5)
+        some_stock = models.Stock.objects.first()
+        some_user = models.User.objects.first()
+        self.assertTrue(some_stock.price == old_price - 1)
+        self.assertTrue(some_user.money == old_money + old_price) # account credited with the OLD price
