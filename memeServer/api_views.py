@@ -1,6 +1,9 @@
 from flask import Flask, request, url_for, jsonify, redirect, Response, render_template
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from . import models, settings, app, utils, requires_roles, load_user
+from . import expensive_operation, inexpensive_db_operation, inexpensive_operation
 import time
 import json
 #
@@ -9,6 +12,7 @@ import json
 
 @app.route('/api/me')
 @login_required
+@inexpensive_operation
 def memes():
     return jsonify({
         "money": current_user.money,
@@ -20,6 +24,7 @@ def memes():
 
 @app.route('/api/buy')
 @login_required
+@inexpensive_db_operation
 def buy():
     meme = request.args.get("meme").strip()
     stock = models.Stock.objects.filter(name=meme).first()
@@ -34,6 +39,7 @@ def buy():
 
 @app.route('/api/sell')
 @login_required
+@inexpensive_db_operation
 def sell():
     meme = request.args.get("meme")
     stock = models.Stock.objects.filter(name=meme).first()
@@ -78,7 +84,7 @@ def admin_remove():
 trending_cache=""
 trending_timestamp=-100000
 @app.route('/api/trending')
-def trends():    
+def trends():
     global trending_timestamp
     global trending_cache
     if time.time() < trending_timestamp + 90*settings.LAG_ALLOWED:

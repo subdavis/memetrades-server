@@ -39,3 +39,9 @@ SERVER_NAME="http://my_server_name"
 
 # Under no circumstances should these words be included...
 BANLIST = []
+
+# Maximum rate for levels of operations
+EXPENSIVE_DB_OPERATION_LIMIT = '2/s'
+INEXPENSIVE_DB_OPERATION_LIMIT = '5/s'
+NO_DB_LIMIT = '10/s'
+
