@@ -3,7 +3,7 @@ from flask_login import LoginManager, current_user, login_user, logout_user, log
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from . import models, settings, app, utils, requires_roles, load_user
-from . import expensive_operation, inexpensive_db_operation, inexpensive_operation
+from . import expensive_db_operation, inexpensive_db_operation, inexpensive_operation
 import time
 import json
 #
@@ -84,6 +84,7 @@ def admin_remove():
 trending_cache=""
 trending_timestamp=-100000
 @app.route('/api/trending')
+@expensive_db_operation
 def trends():
     global trending_timestamp
     global trending_cache
@@ -97,6 +98,7 @@ def trends():
     return trending_cache
 
 @app.route('/api/search')
+@expensive_db_operation
 def search():
     query=request.args.get("q")
     if query:
@@ -108,6 +110,7 @@ def search():
     return jsonify([])
 
 @app.route('/api/stock')
+@expensive_db_operation
 def stock():
     meme = request.args.get("meme")
     stock = models.Stock.objects.filter(
@@ -120,12 +123,14 @@ def stock():
         return jsonify({})
 
 @app.route('/api/leaders')
+@expensive_db_operation
 def leaders():
     return jsonify(models.get_leaders())
 
 stocks_cache={}
 stocks_timestamp={}
 @app.route('/api/stocks')
+@inexpensive_operation # cached functions
 def stocks():
     page = int(request.args.get('page')) if request.args.get('page') else 1
 
@@ -143,6 +148,7 @@ def stocks():
 history_cache = {}
 history_timestamp = {}
 @app.route('/api/history')
+@inexpensive_operation
 def history():
     meme = request.args.get("meme")
 
@@ -162,6 +168,7 @@ def history():
 recent_cache = ""
 recent_timestamp = -10000
 @app.route('/api/recent')
+@inexpensive_operation
 def recent():
     global recent_timestamp
     global recent_cache
