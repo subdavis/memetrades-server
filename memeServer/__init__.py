@@ -2,6 +2,8 @@ from flask import Flask, request, url_for, jsonify, redirect, Response, render_t
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from flask_cors import CORS, cross_origin
 from flask_oauth import OAuth
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 import random
 import logging
 import pickle
@@ -40,6 +42,13 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
 logger.info("Initialized logins...")
+
+#
+# Rate-limiter init
+#
+
+rate_limiter = Limiter(app, key_func = get_remote_address)
+rate_limiter.init(app)
 
 #
 # Oauth Handlers and Login
@@ -139,6 +148,17 @@ def oauth_authorized(resp):
     response = app.make_response(redirect_to_client )  
     response.set_cookie('api_key',value=user.api_key)
     return response
+
+#
+# Rate limit decorators
+#
+
+expensive_db_operation = rate_limiter.limit(settings.EXPENSIVE_DB_OPERATION_LIMIT,
+        except_when=lambda: current_user.get_role() == 'admin')
+inexpensive_db_operation = rate_limiter.limit(settings.INEXPENSIVE_DB_OPERATION_LIMIT,
+        except_when=lambda: current_user.get_role() == 'admin')
+inexpensive_operation = rate_limiter.limit(settings.NO_DB_LIMIT,
+        except_when=lambda: current_user.get_role() == 'admin')
 
 from . import web_views
 from . import api_views
