@@ -5,7 +5,7 @@ import time
 import json
 #
 # Private APIs
-# 
+#
 
 @app.route('/api/me')
 @login_required
@@ -37,10 +37,24 @@ def buy():
 def sell():
     meme = request.args.get("meme")
     stock = models.Stock.objects.filter(name=meme).first()
-    
+
     if stock:
         try:
             current_user.queue_sell(stock)
+            return utils.success()
+        except Exception as e:
+            return utils.fail(reason=str(e))
+    return utils.fail(reason="Stock does not exist")
+
+@app.route('/api/change-image')
+@login_required
+def change_image():
+    meme = request.args.get("meme").strip()
+    url = request.args.get("url").strip()
+    stock = models.Stock.objects.filter(name=meme).first()
+    if stock:
+        try:
+            current_user.change_meme_image(stock, url)
             return utils.success()
         except Exception as e:
             return utils.fail(reason=str(e))
@@ -78,16 +92,16 @@ def admin_remove():
 trending_cache=""
 trending_timestamp=-100000
 @app.route('/api/trending')
-def trends():    
+def trends():
     global trending_timestamp
     global trending_cache
     if time.time() < trending_timestamp + 90*settings.LAG_ALLOWED:
 	print "cached"
 	return trending_cache
-    trending_timestamp = time.time() 
+    trending_timestamp = time.time()
     results = models.get_trending()
     trending_cache = jsonify(results)
-    
+
     return trending_cache
 
 @app.route('/api/search')
@@ -107,7 +121,7 @@ def stock():
     stock = models.Stock.objects.filter(
             name=meme,
             blacklisted=False
-        ).only('name','price','trend','id').first()
+        ).only('name','price','trend','id','image').first()
     if stock:
         return Response(stock.to_json(), mimetype="application/json")
     else:
@@ -124,9 +138,9 @@ def stocks():
     page = int(request.args.get('page')) if request.args.get('page') else 1
 
     # if the cache is fresh
-    if (page in stocks_timestamp) and (stocks_timestamp[page]  > time.time() - settings.LAG_ALLOWED):    
+    if (page in stocks_timestamp) and (stocks_timestamp[page]  > time.time() - settings.LAG_ALLOWED):
         return stocks_cache[page]
-    
+
     # if the cache is stale
     offset = (page - 1) * settings.STOCKS_PER_PAGE
     all_stocks = get_paged_stocks(page)
@@ -162,7 +176,7 @@ def recent():
     if time.time() < recent_timestamp + settings.LAG_ALLOWED:
 	print "cached"
 	return recent_cache
-    
+
     # Get the 100 most recent transactions
     # return Response(models.get_recents().to_json(), mimetype='application/json')
     recent_cache = jsonify(models.get_recents())
@@ -190,7 +204,7 @@ def inboud():
                         from_domain = from_domain[1]
                     else:
                         from_domain = "unknown.com"
-                    
+
                     rcpt_to = email['msys']['relay_message']['rcpt_to']
                     # header_from = email['msys']['relay_message']['content']['headers']['From']
                     # header_to = email['msys']['relay_message']['content']['headers']['To'] #this one is a list.
@@ -234,14 +248,13 @@ def inboud():
                 print("MAIL RECEIPT INVALID")
                 return utils.fail(reason="unknown")
             return utils.success()
-        
+
         except Exception as e:
             print("EXCEPTION")
             print(str(e))
             return utils.fail(reason="An exception was thrown")
     else:
         return utils.success()
-
 #
 # Some helpers
 #

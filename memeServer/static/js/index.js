@@ -37,6 +37,8 @@ function board_display(meme){
             $("#selected-price").text("Price: $" + data['price']);
             $("#selected-trend").empty().text("Trend: ").append(trend_symbol(data['trend']));
             $("#selected-link").attr("href", "/stock/" + data['_id']['$oid']);
+            $("#imageDisplay").attr("src", data['image']);
+            console.log("meme image changed to " + data['image']);
         } else {
             $("#selected-price").text("Price: $1");
             $("#selected-trend").empty().text("?");
@@ -51,7 +53,7 @@ function tableCreate(el, data, query)
 {
     el.empty();
     var tbl  = document.createElement("table");
-    
+
     if (data.length >= 1){
         var trh = tbl.insertRow();
         var th_amount = trh.insertCell();
@@ -84,8 +86,8 @@ function tableCreate(el, data, query)
         td_price.appendChild(document.createTextNode('$' + data[i]['price']));
 
         var td_trend = tr.insertCell();
-        td_trend.appendChild(data[i]['trend'] 
-            ? trend_symbol(data[i]['trend']) 
+        td_trend.appendChild(data[i]['trend']
+            ? trend_symbol(data[i]['trend'])
             : document.createTextNode(""));
 
         var td_value = tr.insertCell();
@@ -113,7 +115,7 @@ function tableCreate(el, data, query)
         if (is_authenticated())
             document.getElementById("meme").value = this.getAttribute('meme');
         board_display(this.getAttribute('meme'));
-        
+
 	document.getElementById("selected-stock").scrollIntoView(
 	       {block: "start", behavior: "smooth"});
     });
@@ -146,16 +148,16 @@ function updatePortfolio(meme) {
     if (is_authenticated()){
         $.getJSON(base_url+'/api/me', function(data) {
             me = data;
-            	    
+
             portfolio_list = data['stocks'];
-            
+
             for(var i = 0; i < portfolio_list.length; i++){
               stock_n_owned_lookup[portfolio_list[i]["name"]]=portfolio_list[i]["amount"];
 	    }
 	    updateAccount(data['stock_value'], data['money']);
             //update table on portfolio page.
             if (get_view() == "portfolio")
-                tableCreate($("#jsonM"), data['stocks']);           
+                tableCreate($("#jsonM"), data['stocks']);
         });
     }
 }
@@ -169,7 +171,7 @@ function updateRecent(){
 function updateTrending(){
     $.getJSON(base_url+'/api/trending', function(data) {
         tableCreate($("#jsonM"), data);
-    });  
+    });
 }
 
 function update(meme){
@@ -207,6 +209,21 @@ function buy() {
             toastr.error(data['reason']);
         else
             toastr.success('Queued one BUY.');
+        update(meme);
+    });
+}
+
+function change_image() {
+    var url = prompt("Enter valid image URL");
+    if (url === null) {
+        return;
+    }
+    var meme = $("#selected-stock").attr('meme');
+    $.get(base_url+"/api/change-image", {meme: meme, url: url}, function(data){
+        if (data['status'] == 'fail')
+            toastr.error(data['reason']);
+        else
+            toastr.success('Image changed.');
         update(meme);
     });
 }

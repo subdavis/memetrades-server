@@ -2,15 +2,24 @@ from mongoengine import *
 import time
 import datetime
 from functools import wraps
+from flask import request
+import requests
+# For checking if URL links to image
+import validators
+import imghdr
+import httplib
+import cStringIO
+from urlparse import urlparse
+
 
 from . import utils
 from . import settings
 
 connect(settings.DATABASE["name"])
 
-# 
+#
 # Exception Classes
-# 
+#
 class BlacklistedException(Exception):
     pass
 class NoMoneyException(Exception):
@@ -21,12 +30,18 @@ class GenericFailException(Exception):
     pass
 class CreationSuspendedException(Exception):
     pass
+class ImageSuspendedException(Exception):
+    pass
+class ImageURLException(Exception):
+    pass
+class ImageModException(Exception):
+    pass
 
-# 
+#
 # Model Classes
 #
 class User(Document):
-    fb_id=StringField(required=True, primary_key=True) #Primary 
+    fb_id=StringField(required=True, primary_key=True) #Primary
     holdings=DictField()
     name=StringField(required=True)
     money=FloatField(required=True)
@@ -34,14 +49,15 @@ class User(Document):
     api_key=StringField(required=True)
     referral_code=StringField()
     last_banned_ownership=FloatField()
+    last_posted_image=FloatField()
     admin=BooleanField()
 
     # For charity stuff
     donation_count=IntField()
     donation_replies=ListField()
 
-    # holdings Example 
-    # { 
+    # holdings Example
+    # {
     #    "stock_id": amount
     # }
 
@@ -50,6 +66,7 @@ class User(Document):
         self.name = name
         self.money = settings.INITIAL_MONEY
         self.last_banned_ownership = 0
+        self.last_posted_image = 0
         self.stock_value = 0
         self.holdings = {}
         self.api_key = utils.get_new_key()
@@ -57,7 +74,7 @@ class User(Document):
         self.admin = False
         self.save()
 
-    # 
+    #
     # API for database updates
     #
 
@@ -106,7 +123,7 @@ class User(Document):
                                             user=self,
                                             action=action)
         return True
-    
+
     def queue_buy(self, stock):
         if stock.price == 0 and not self.can_buy_new():
             raise CreationSuspendedException("You owned a banned** meme, so buying new memes is disabled for 24 hours.")
@@ -122,9 +139,27 @@ class User(Document):
             return self._queue_transaction(stock, "sell")
         raise ThisMemeNotInPortfolio("You don't have any of this stock...")
 
+    def change_meme_image(self, stock, url):
+        if not self.can_post_image():
+            raise ImageSuspendedException("You have already posted an image in the past 24 hours")
+
+        if is_image_url(url):
+            if not has_nudity_GET(url):
+                last_posted_image = time.time
+                return stock.change_image(url)
+            raise ImageModException("Caught by image moderation filter")
+        raise ImageURLException("Not an image url")
+
     def can_buy_new(self):
         seconds_per_day = 86400
         if time.time() - seconds_per_day >= self.last_banned_ownership:
+            return True
+        return False
+
+    def can_post_image(self):
+        # Change to small num for testing
+        seconds_per_day = 86400
+        if time.time() - seconds_per_day >= self.last_posted_image:
             return True
         return False
 
@@ -137,16 +172,16 @@ class User(Document):
             if self.holdings[key] > 0:
                 stock = Stock.objects.get(id=key)
                 ret.append({
-                    "name": stock.name, 
+                    "name": stock.name,
                     "amount": self.holdings[key],
                     "id": key,
                     "price": stock.price,
                     "trend": stock.trend,
                     "blacklisted": stock.blacklisted,
                 })
-        ret = sorted(ret, 
-            key=lambda k: k['amount'], 
-            reverse=True) 
+        ret = sorted(ret,
+            key=lambda k: k['amount'],
+            reverse=True)
         return ret
 
     def get_id(self):
@@ -191,15 +226,16 @@ class Stock(Document):
     trend=FloatField()
     blacklisted=BooleanField()
     creator=ReferenceField(User)
+    image=StringField()
 
     def buy_one(self, user):
         if self.blacklisted:
             return False
         self.price += 1
         hist = StockHistoryEntry(
-            stock=self, 
+            stock=self,
             time=time.time(),
-            user=user, 
+            user=user,
             price=self.price,
 	    action="buy")
         hist.save()
@@ -211,13 +247,18 @@ class Stock(Document):
     def sell_one(self, user):
         self.price -= 1
         hist = StockHistoryEntry(
-            stock=self, 
-            time=time.time(), 
+            stock=self,
+            time=time.time(),
             user=user,
             price=self.price,
 	    action="sell")
         hist.save()
         self.trend = -1.0
+        self.save()
+        return True
+
+    def change_image(self, url):
+        self.image = url
         self.save()
         return True
 
@@ -274,7 +315,7 @@ class TransactionBacklog(Document):
             self.user.buy_one(self.stock)
         elif self.action == 'sell':
             self.user.sell_one(self.stock)
-        
+
         print("[{time}][{action}] {stock_name} - {user}".format(
             time=round(self.time),
             action=self.action,
@@ -308,7 +349,7 @@ def get_trending():
                     "_id": {"user":"$user", "stock": "$stock"},
                     "stock": {"$first":"$stock"}
                 }
-            }, 
+            },
             {
                 "$group":{
                     "_id":"$stock",
@@ -336,8 +377,8 @@ def get_trending():
 def get_leaders():
     result = User._get_collection().aggregate([
             {
-                '$project' : { 
-                    'name': 1, 
+                '$project' : {
+                    'name': 1,
                     'fb_id': 1,
                     'total': {'$add': ['$money', '$stock_value'] }
                 }
@@ -365,6 +406,74 @@ def ban_meme(meme_id):
         real_user.save()
     return
 
+def has_nudity_GET(url):
+    parameters = {
+        'api_user' : settings.SIGHTENGINE['APP_ID'],
+        'api_secret' : settings.SIGHTENGINE['APP_SECRET'],
+        'url' : url
+        }
+
+    response = requests.get('https://api.sightengine.com/1.0/nudity.json', params=parameters)
+
+    if response.status_code != 200:
+        raise ImageModException("Image moderation API error")
+
+    raw = response.json()['nudity']['raw']
+    partial = response.json()['nudity']['partial']
+    safe = response.json()['nudity']['safe']
+
+    if(raw >= settings.RAW_NUDITY_THRESHOLD or partial >= settings.PARTIAL_NUDITY_THRESHOLD):
+        raise ImageModException("Caught by image moderation filter")
+
+    return False
+
+# for some reason this POST request doesn't count towards API rate limit!!!
+def has_nudity_POST(path):
+    parameters = {
+        'api_user' : settings.SIGHTENGINE['APP_ID'],
+        'api_secret' : settings.SIGHTENGINE['APP_SECRET']
+        }
+
+    media = {'media' : open(path, 'rb')} # opening in binary mode, may have something to do with bypassing rate limit
+
+    response = requests.post("https://api.sightengine.com/1.0/nudity.json", json=parameters, files=media)
+
+    if response.status_code != 200:
+        raise ImageModException("Image moderation API error")
+
+    raw = response.json()['nudity']['raw']
+    partial = response.json()['nudity']['partial']
+    safe = response.json()['nudity']['safe']
+
+    if(raw >= settings.RAW_NUDITY_THRESHOLD or partial >= settings.PARTIAL_NUDITY_THRESHOLD):
+        raise ImageModException("Caught by image moderation filter")
+
+    return False
+
+def is_image_url(url):
+    if not validators.url(url):
+        raise ImageURLException("not a url")
+        # return False
+
+    parsed_url = urlparse(url)
+    base_url = parsed_url.netloc
+
+    if base_url == 'i.imgur.com':
+        raise ImageURLException("imgur not currently supported")
+
+    connection = httplib.HTTPConnection(base_url, timeout = 60)
+    connection.request('GET', parsed_url.path)
+    response = connection.getresponse()
+
+    image_file_obj = cStringIO.StringIO(response.read())
+    url_type = imghdr.what(image_file_obj)
+
+    if(url_type == None):
+        raise ImageURLException("not an image ", response, base_url, parsed_url.path, url_type)
+        # return False
+
+    return True
+
 def sanity_checks():
     """
     Function for enforcing new database rules on startup...
@@ -390,12 +499,12 @@ def sanity_checks():
     #     for h in s.history:
     #         newh = StockHistoryEntry(stock=s, time=h.time, price=h.price)
     #         newh.save()
-    
+
     # users = User.objects(referral_code__exists=False)
     # for user in users:
     #     user.referral_code = utils.get_new_key()
     #     user.save()
-    
+
     users = User.objects(last_banned_ownership__exists=False)
     for user in users:
         user.last_banned_ownership = 0

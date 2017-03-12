@@ -43,10 +43,10 @@
             <!-- Sidebar -->
             <div class="col-sm-4 col-md-3 fixed">
                 <div id="portfolio">
-                    
+
                     <!-- Account info -->
                     <div style="margin-bottom: -20px; margin-top: 10px;" id="logo" width="100%">
-                        <a href="/"> 
+                        <a href="/">
                             <img style="display: block; margin:auto;" width=250 height=250 src="{{ url_for('static', filename='img/logo-shit.png') }}">
                         </a>
                     </div>
@@ -82,7 +82,7 @@
                         <p>like us on facebook.  it will make us feel good.</p>
                     </div>
                 </div>
-                
+
                 <!-- Search -->
                 <div class='buysellbox'>
                     <h1>🔍👁 Search/Create: </h1>
@@ -90,19 +90,19 @@
                     <br>
                     <!-- <button class="buysell" style="margin-top: 10px;" onclick="search()">Search</button> -->
                 </div>
-                
+
                 <!-- Search Results -->
                 <div id="search-results">
                     <table id='search-results-table'></table>
                 </div>
-                
+
                 <!-- About section -->
                 <h2>what even is this?</h2>
                 <p> Trading memes, obvs.  You must sign in with facebook to buy.  We won't send you email, notifications, or anything of the sort. Click memes to select them, then buy or sell.  Meme not listed?  Type or paste into the search bar, then inspect and buy.  Don't let your memes be dreams.
                 </p>
 
                 <h2>but... why?</h2>
-                <p>We the developers believe that civilization is entering the golden age of meme trading. 
+                <p>We the developers believe that civilization is entering the golden age of meme trading.
                 </p>
 
                 <h2>buy this website</h2>
@@ -135,9 +135,9 @@
                 <br>
                 (B:XX) - this tells you the last price you paid for a stock.
                 </p>
-                
+
             </div>
-            
+
             <!-- Main Content -->
             <div class="col-sm-8 col-md-9">
                 <div class="row">
@@ -150,7 +150,7 @@
                             </h2>
                         </center>
                     </div>
-                    
+
                     <!-- Quick info pane below title -->
                     <div class="selected col-md-12">
                         <span id="selected-price">Price: {{ stock.price if stock else '' }}</span>
@@ -161,8 +161,9 @@
                             </a>
                         </span>
                         {% if current_user.is_authenticated %}
-                            <button id="buy-button" style="background-color: green;" onclick="buy()">⬆ BUY</button>
+                            <button id="buy-button" style='background-color: green;' onclick="buy()">⬆ BUY</button>
                             <button id="sell-button" style='background-color: red;' onclick="sell()">⬇ SELL</button>
+                            <button id="change-image" style='background-color: white:' onclick="change_image()"> IMAGE</button>
                             {% if current_user.is_admin %}
                                 <button onclick="remove()">Admin: Remove</button>
                             {% endif %}
@@ -176,21 +177,34 @@
                         </div>
                     </div> -->
 
-                    <div class="col-md-12">
-                        <div id="graph">
-                            <div id="chartContainer" style="height: 300px; width: 100%;">
+                    {% if stock %}
+                        <div class="col-md-3">
+                            <div id="memeImage">
+                                <div id="imageContainer" style="height: 300px; width: 100%;">
+                                    {% if stock.image %}
+                                        <img id="imageDisplay" src='{{ stock.image }}' style="height: 100%; width: 100%;">
+                                    {% else %}
+                                        <img id="imageDisplay" src='/static/img/logo-shit.png' style="height: 100%; width: 100%;">
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
-                    </div>
+                        <div class="col-md-9">
+                            <div id="graph">
+                                <div id="chartContainer" style="height: 300px; width: 100%;">
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
                     <a id="scrollhere"></a>
                     <!-- Table nav -->
                     <div id="{{ view }}" class='col-md-12'>
                         <ul class="nav nav-tabs">
-                          
+
                           <li class='{{ "active" if view=="market" else "" }}'>
                             <a href="/#scrollhere">All Stocks</a>
                           </li>
-                          
+
                           {% if current_user.is_authenticated %}
                             <li class='{{ "active" if view=="portfolio" else "" }}'><a href="/portfolio#scrollhere">My Stocks</a></li>
                           {% endif %}
@@ -202,7 +216,7 @@
                           <li class='{{ "active" if view=="trending" else "" }}'>
                             <a href='/trending#scrollhere'>Trending</a>
                           </li>
-                        
+
                         </ul>
                     </div>
                     <br>
@@ -234,11 +248,11 @@
                     </div>
 
                     {% if view=='market' %}
-                    
+
                     <!-- Pagination  -->
                     <div class='pagination'>
                         <a href="?page={{ page - 1 if page > 1 else 1 }}#scrollhere" style="float: left;">&nbsp;⇦</a>
-                            Page: <span id="pagenumber">{{ page }}</span> 
+                            Page: <span id="pagenumber">{{ page }}</span>
                         <a href="?page={{ page + 1 }}#scrollhere" style="float: right;">⇨&nbsp;</a>
                     </div>
                     {% endif %}
@@ -251,7 +265,7 @@
     <!-- Scrolling leaderboards. -->
     <div class="footer">
         <marquee behavior="scroll" direction="left" id='leaderboard'>
-        Leaderboard: 
+        Leaderboard:
         {% for leader in leaders%}
             {{ ' ' ~ leader['name'] ~ ' ' ~ leader['total'] ~ ' -- ' }}
         {% endfor %}

@@ -1,12 +1,13 @@
 function graph(meme, base_url) {
   $.getJSON("/api/history", {"meme":meme}, function (data) {
     var formattedData = new Array();
-    
+
     // format data to [time, price] format
     for (var trade in data) {
       formattedData.push([data[trade].time * 1000, data[trade].price]);
     }
-    
+    formattedData.reverse();
+
     Highcharts.chart('chartContainer', {
         chart: {
             panning: true,

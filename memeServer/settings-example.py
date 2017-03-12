@@ -9,7 +9,7 @@ DATABASE = {
 # Number of seconds to keep cache.
 LAG_ALLOWED=1.5
 # Generate this once, and only change it when you want to forece everyone to be logged out.
-SECRET_KEY="EXAMPLE" 
+SECRET_KEY="EXAMPLE"
 # Amount of money to give new users
 INITIAL_MONEY=1000.0
 # Length in characters of the generated API key.
@@ -28,12 +28,24 @@ CHARITY_DATA = {
     "subject": ["CHANGE"],
 }
 
-# Get this from developers.facebook.com 
+# Get this from developers.facebook.com
 FACEBOOK = {
     "APP_ID":"CHANGE",
     "APP_SECRET":"CHANGE",
   # "ACCESS_TOKEN":"CHANGE" # Not ucrrently used
 }
+
+# Sightengine API info
+SIGHTENGINE = {
+    # Dev ID and Key, please don't push to production
+    "APP_ID":"1405998577",
+    "APP_SECRET":"qfuQuHwpAc38q8Y8UGoN"
+}
+
+# Image moderation thresholds
+# Max probability allowed before rejection
+RAW_NUDITY_THRESHOLD=0.3
+PARTIAL_NUDITY_THRESHOLD=1.1 # > 1 means never reject
 
 #Used to tell facebook where to redirect
 SERVER_NAME="http://my_server_name"

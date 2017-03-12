@@ -14,3 +14,6 @@ pyparsing==2.1.10
 requests==2.13.0
 six==1.10.0
 Werkzeug==0.11.15
+validators==0.11.2
+httplib2==0.10.3
+requests==2.13.0
