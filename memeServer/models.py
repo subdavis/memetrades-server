@@ -144,7 +144,7 @@ class User(Document):
             raise ImageSuspendedException("You have already posted an image in the past 24 hours")
 
         if is_image_url(url):
-            if not has_nudity_GET(url):
+            if True:#not has_nudity_GET(url):
                 last_posted_image = time.time
                 return stock.change_image(url)
             raise ImageModException("Caught by image moderation filter")

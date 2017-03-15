@@ -10,9 +10,6 @@
   - also doesn't support imgur links
     - currently using GET request to check if url is an image file or not
       - imgur (and other sites) require auth API for this
-- Image changing modeled after buy/sell functionality
-  - is a GET request
-  - should probably be a POST request, but I got a 405 error and wasn't sure how to work around it
 - Image changing limited to once per day
   - modeled after user suspension code
   - this limit (and user suspension length) should probs be moved to settings

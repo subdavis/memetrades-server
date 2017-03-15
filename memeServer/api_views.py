@@ -46,11 +46,12 @@ def sell():
             return utils.fail(reason=str(e))
     return utils.fail(reason="Stock does not exist")
 
-@app.route('/api/change-image')
+@app.route('/api/change-image', methods=['POST'])
 @login_required
 def change_image():
-    meme = request.args.get("meme").strip()
-    url = request.args.get("url").strip()
+    meme = request.form.get("meme").strip()
+    #raise Exception(meme)
+    url = request.form.get("url").strip()
     stock = models.Stock.objects.filter(name=meme).first()
     if stock:
         try:

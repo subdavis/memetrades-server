@@ -38,7 +38,6 @@ function board_display(meme){
             $("#selected-trend").empty().text("Trend: ").append(trend_symbol(data['trend']));
             $("#selected-link").attr("href", "/stock/" + data['_id']['$oid']);
             $("#imageDisplay").attr("src", data['image']);
-            console.log("meme image changed to " + data['image']);
         } else {
             $("#selected-price").text("Price: $1");
             $("#selected-trend").empty().text("?");
@@ -219,7 +218,8 @@ function change_image() {
         return;
     }
     var meme = $("#selected-stock").attr('meme');
-    $.get(base_url+"/api/change-image", {meme: meme, url: url}, function(data){
+    console.log('meme: ' + meme);
+    $.post(base_url+"/api/change-image", {meme: meme, url: url}, function(data){
         if (data['status'] == 'fail')
             toastr.error(data['reason']);
         else
