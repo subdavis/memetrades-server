@@ -48,7 +48,7 @@ logger.info("Initialized logins...")
 #
 
 rate_limiter = Limiter(app, key_func = get_remote_address)
-rate_limiter.init(app)
+rate_limiter.init_app(app)
 
 #
 # Oauth Handlers and Login
@@ -153,12 +153,9 @@ def oauth_authorized(resp):
 # Rate limit decorators
 #
 
-expensive_db_operation = rate_limiter.limit(settings.EXPENSIVE_DB_OPERATION_LIMIT,
-        except_when=lambda: current_user.get_role() == 'admin')
-inexpensive_db_operation = rate_limiter.limit(settings.INEXPENSIVE_DB_OPERATION_LIMIT,
-        except_when=lambda: current_user.get_role() == 'admin')
-inexpensive_operation = rate_limiter.limit(settings.NO_DB_LIMIT,
-        except_when=lambda: current_user.get_role() == 'admin')
+expensive_db_operation = rate_limiter.limit(settings.EXPENSIVE_DB_OPERATION_LIMIT)
+inexpensive_db_operation = rate_limiter.limit(settings.INEXPENSIVE_DB_OPERATION_LIMIT)
+inexpensive_operation = rate_limiter.limit(settings.NO_DB_LIMIT)
 
 from . import web_views
 from . import api_views

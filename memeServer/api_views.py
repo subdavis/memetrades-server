@@ -3,7 +3,7 @@ from flask_login import LoginManager, current_user, login_user, logout_user, log
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from . import models, settings, app, utils, requires_roles, load_user
-from . import expensive_operation, inexpensive_db_operation, inexpensive_operation
+from . import expensive_db_operation, inexpensive_db_operation, inexpensive_operation
 import time
 import json
 #
