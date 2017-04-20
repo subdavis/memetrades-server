@@ -3,7 +3,7 @@
 
 # Mongo connection info
 DATABASE = {
-    "name":"memes"
+    "name":"memes-tests" # Just in case this gets run on production, it won't wipe out the DB
 }
 
 # Number of seconds to keep cache.
@@ -18,7 +18,8 @@ API_KEY_LENGTH=32
 STOCKS_PER_PAGE=50
 # Number of memebucks a referral gets you.
 MONEY_PER_REFERRAL=300
-
+# Number of history entries to return
+MAX_HISTORY_LENGTH=2000
 # A passphrase that sparkpost can pass to my application
 WEBHOOK_ID='CHANGE'
 DONATION_DOMAIN='donations.memetrades.com'

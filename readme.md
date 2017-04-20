@@ -1,5 +1,6 @@
 MemeTrades.com
 ==============
+![build](https://travis-ci.org/meme-exchange/server.svg?branch=master)
 
 ### On the web...
 * [Subreddit](https://reddit.com/r/memetrades)
@@ -56,3 +57,9 @@ restart nginx:
 
 1. test config: sudo nginx -t
 2. restart: sudo service nginx restart
+
+# Unit tests.
+
+from server/ run:
+
+`python -m unittest discover -s tests/`
