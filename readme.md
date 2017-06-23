@@ -16,7 +16,7 @@ MemeTrades.com
 #### Web
 `docker build -f Dockerfile.web -t memes .`
 
-`docker run -dt --link mongo:mongo -p 8080:8080 --name memect memes`
+`docker run -dt --link mongo:mongo -p 80:80 --name memect memes`
 
 ### Feature requests or bug reports:
 
