@@ -3,7 +3,8 @@
 
 # Mongo connection info
 DATABASE = {
-    "name":"memes-tests" # Just in case this gets run on production, it won't wipe out the DB
+    "name":"memes-tests", # Just in case this gets run on production, it won't wipe out the DB
+    "host":"mongo"
 }
 
 # Number of seconds to keep cache.

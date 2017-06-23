@@ -6,6 +6,16 @@ MemeTrades.com
 * [Subreddit](https://reddit.com/r/memetrades)
 * or email developers [at] memetrades [dot] com
 
+### Docker production deploy
+
+#### Database
+`docker build -f Dockerfile.mongo -t mongo .`
+`docker run -d --name mongo mongo`
+
+#### Web
+`docker build -f Dockerfile.web -t memes .`
+`docker run -dt --link mongo:mongo -p 8080:8080 --name memect memes`
+
 ### Feature requests or bug reports:
 
 Please open a github issue.  We will read them.  I promise.
@@ -22,14 +32,16 @@ Memetrades runs on Ubuntu, and we aren't going to support anything else.
 6. Run `python wsgi.py`
 7. Run `python process_queue.py`
 8. Run `python update.py` every 2 minutes or so. use a cron job or something. IDK, sue me
-9. open mongo and type
+9. open mongo and type 
 
+```
 use memes
 
 db.stock_history_entry.createIndex({"time":1})
 
 db.stock_history_entry.createIndex({"stock":1})
 
+```
 what? you don't want to get your hands dirty and mess with mongo? 
 
 You think this could have been automated? You're still mad about the cron job?

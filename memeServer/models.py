@@ -6,7 +6,7 @@ from functools import wraps
 from . import utils
 from . import settings
 
-connect(settings.DATABASE["name"])
+connect(settings.DATABASE["name"], host=settings.DATABASE["host"])
 
 # 
 # Exception Classes
