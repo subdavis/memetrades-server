@@ -10,10 +10,12 @@ MemeTrades.com
 
 #### Database
 `docker build -f Dockerfile.mongo -t mongo .`
+
 `docker run -d --name mongo mongo`
 
 #### Web
 `docker build -f Dockerfile.web -t memes .`
+
 `docker run -dt --link mongo:mongo -p 8080:8080 --name memect memes`
 
 ### Feature requests or bug reports:
