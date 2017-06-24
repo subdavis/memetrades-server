@@ -14,6 +14,10 @@ MemeTrades.com
 `docker run -d --name mongo mongo`
 
 #### Web
+
+1. Should be run with nginx-proxy @ https://github.com/jwilder/nginx-proxy
+2. Create a copy of memeServer/settings-example.py called memeServer/settings.py
+
 `docker build -f Dockerfile.web -t memes .`
 
 `docker run -dt --link mongo:mongo -p 80:80 --name memect memes`
