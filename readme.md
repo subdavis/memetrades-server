@@ -16,11 +16,12 @@ MemeTrades.com
 #### Web
 
 1. Should be run with nginx-proxy @ https://github.com/jwilder/nginx-proxy
-2. Create a copy of memeServer/settings-example.py called memeServer/settings.py
+2. HTTPS done with https://github.com/JrCs/docker-letsencrypt-nginx-proxy-companion
+3. Create a copy of memeServer/settings-example.py called memeServer/settings.py
 
 `docker build -f Dockerfile.web -t memes .`
 
-`docker run -e VIRTUAL_HOST=memetrades.com -dt --link mongo:mongo -p 80:80 --name memect memes`
+`docker run -e "VIRTUAL_HOST=memetrades.com" -e "LETSENCRYPT_HOST=memetrades.com," -e "LETSENCRYPT_EMAIL=developers@memetrades.com" -dt --link mongo:mongo --name memect memes`
 
 ### Feature requests or bug reports:
 
