@@ -22,6 +22,7 @@ VOLUME ["/data/db"]
 WORKDIR /data
 
 # Restore the current database
+RUN mongod --fork --logpath /var/log/mongod.log
 RUN mongorestore --db memes dump/
 
 # Define default command.
