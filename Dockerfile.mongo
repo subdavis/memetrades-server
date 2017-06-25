@@ -21,6 +21,9 @@ VOLUME ["/data/db"]
 # Define working directory.
 WORKDIR /data
 
+# Restore the current database
+RUN mongorestore --db memes dump/
+
 # Define default command.
 CMD ["mongod"]
 

@@ -11,7 +11,7 @@ MemeTrades.com
 #### Database
 `docker build -f Dockerfile.mongo -t mongo .`
 
-`docker run -d --name mongo mongo`
+`docker run -d --name -v /data/db:/data/db mongo mongo`
 
 #### Web
 
@@ -21,7 +21,7 @@ MemeTrades.com
 
 `docker build -f Dockerfile.web -t memes .`
 
-`docker run -e "VIRTUAL_HOST=memetrades.com" -e "LETSENCRYPT_HOST=memetrades.com," -e "LETSENCRYPT_EMAIL=developers@memetrades.com" -dt -v /certs:/certs:rw --link mongo:mongo --name memect memes`
+`./redeploy.sh`
 
 ### Feature requests or bug reports:
 
