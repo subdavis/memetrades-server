@@ -14,7 +14,6 @@ ADD . /src
 RUN pip install -r requirements.txt
 
 RUN ln -s /src/nginx-memes.conf /etc/nginx/sites-enabled/memes.conf
-RUN service nginx restart
 RUN chmod +X /src/web-startup.sh
 
 CMD ["/bin/bash", "/src/web-startup.sh"]
