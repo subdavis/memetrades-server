@@ -15,15 +15,13 @@ RUN \
   apt-get install -y mongodb-org && \
   rm -rf /var/lib/apt/lists/*
 
+ADD . /src
+
 # Define mountable directories.
 VOLUME ["/data/db"]
 
 # Define working directory.
-WORKDIR /data
-
-# Restore the current database
-RUN mongod --fork --logpath /var/log/mongod.log
-RUN mongorestore --db memes dump/
+WORKDIR /datas
 
 # Define default command.
 CMD ["mongod"]
