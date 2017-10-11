@@ -1,6 +1,6 @@
 MemeTrades.com
 ==============
-![build](https://travis-ci.org/suBDavis/memetrades-server.svg?branch=master)
+![build](https://travis-ci.org/subdavis/memetrades-server.svg?branch=master)
 
 ### On the web...
 * [Subreddit](https://reddit.com/r/memetrades)
